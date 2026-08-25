@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Medicus - Fase 2: Calculadora y Herramientas de Conversión</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            800: '#0f172a',
+                            900: '#0b1120',
+                            950: '#050811'
+                        },
+                        medical: {
+                            50: '#f0fdfa',
+                            100: '#ccfbf1',
+                            500: '#14b8a6',
+                            600: '#0d9488',
+                            700: '#0f766e'
+                        },
+                        gold: {
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        heading: ['Outfit', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0b1120;
+            color: #f8fafc;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #2dd4bf 0%, #38bdf8 50%, #818cf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .glass-card {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-card-accent {
+            background: linear-gradient(135deg, rgba(20, 184, 166, 0.15) 0%, rgba(15, 23, 42, 0.8) 100%);
+            border: 1px solid rgba(20, 184, 166, 0.3);
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-16">
+
+    <!-- Header / Navbar Prototype -->
+    <header class="sticky top-0 z-50 glass-card border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-medical-600 to-sky-500 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-medical-500/20">
+                    <i class="fa-solid fa-hospital-user"></i>
+                </div>
+                <div>
+                    <span class="font-heading font-bold text-xl tracking-tight text-white">NEXUS <span class="text-medical-500">MEDICUS</span></span>
+                    <span class="block text-[10px] text-slate-400 tracking-wider font-semibold uppercase">Valle Real • Zapopan</span>
+                </div>
+            </div>
+
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
+                <a href="#prompt" class="hover:text-medical-500 transition-colors">Prompt Claude Code</a>
+                <a href="#perfil" class="hover:text-medical-500 transition-colors">Selector de Perfil</a>
+                <a href="#calculadora" class="hover:text-medical-500 transition-colors">Calculadora ROI</a>
+                <a href="#ubicacion" class="hover:text-medical-500 transition-colors">Ubicación Valle Real</a>
+            </nav>
+
+            <a href="#calculadora" class="bg-gradient-to-r from-medical-600 to-teal-500 hover:from-medical-500 hover:to-teal-400 text-white font-semibold px-5 py-2.5 rounded-xl shadow-lg shadow-medical-600/30 text-sm transition-all flex items-center gap-2">
+                <i class="fa-solid fa-calculator"></i> Proyectar Rendimiento
+            </a>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 space-y-12">
+
+        <!-- BANNER DE INSTRUCCIONES / CLAUDE CODE PROMPT -->
+        <section id="prompt" class="glass-card-accent rounded-3xl p-6 md:p-8 relative overflow-hidden">
+            <div class="flex flex-col lg:flex-row gap-6 items-start justify-between">
+                <div class="space-y-3 max-w-3xl">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-medical-500/20 text-medical-500 text-xs font-semibold uppercase tracking-wider">
+                        <i class="fa-solid fa-code"></i> Fase 2: Prompt Maestro para Claude Code
+                    </div>
+                    <h1 class="text-2xl md:text-3xl font-heading font-bold text-white">
+                        Copia este Prompt para construir la <span class="gradient-text">Fase 2</span> en tu proyecto
+                    </h1>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        Este prompt integra la lógica interactiva de la <strong>Calculadora de ROI y NOI</strong>, el <strong>Filtro dinámico de perfil (Médico vs. Inversionista)</strong> y el <strong>módulo contextual de ubicación en Valle Real, Zapopan</strong>.
+                    </p>
+                </div>
+                <button onclick="copyPrompt()" class="w-full lg:w-auto bg-slate-800 hover:bg-slate-700 text-white font-semibold px-6 py-3 rounded-2xl border border-slate-700 transition-all flex items-center justify-center gap-2 shrink-0">
+                    <i class="fa-solid fa-copy text-medical-500" id="copy-icon"></i>
+                    <span id="copy-text">Copiar Prompt de la Fase 2</span>
+                </button>
+            </div>
+
+            <!-- PROMPT TEXTAREA DISPLAY -->
+            <div class="mt-6 bg-navy-950 rounded-2xl p-4 border border-slate-800 font-mono text-xs text-slate-300 overflow-x-auto max-h-48 scrollbar-thin">
+                <pre id="prompt-code" class="whitespace-pre-wrap">Actúa como un Desarrollador Full-Stack Senior e Ingeniero UX/UI especializado en tecnología inmobiliaria (PropTech) y finanzas médicas.
+Necesito que integres la FASE 2 en la plataforma "Nexus Medicus" (Landing page para venta de consultorios en Valle Real, Zapopan).
+
+MÓDULOS A IMPLEMENTAR EN LA FASE 2:
+
+1. SELECTOR DINÁMICO DE PERFIL (Doctor Especialista vs. Inversionista):
+- Permite alternar la perspectiva de la landing page con un toggle o pestañas activas.
+- Modo Inversionista: Enfatiza Cap Rate (5.97% a 8.78%), ROI anual (11.39% a 16.76%), NOI mensual, Plusvalía proyectada en Zapopan y plusvalía por renta patrimonial.
+- Modo Médico Especialista: Enfatiza m² utilizables, acabados, permisos de salud/COFEPRIS listos, recepción ejecutiva, estacionamiento exclusivo para pacientes, seguridad y prestigiosa dirección en Valle Real.
+
+2. CALCULADORA INTERACTIVA DE RENDIMIENTO (ROI & NOI CALCULATOR):
+- Implementa una calculadora financiera dinámica con los 8 modelos precargados.
+
+3. SECCIÓN INTERACTIVA DE UBICACIÓN Y MAPA DE VALLE REAL:
+- Dirección: Av. Central Guillermo González Camarena #500, Valle Real, 45136 Zapopan, Jal.
+
+4. ACCIONES DE CONVERSIÓN CONTEXTUALES:
+- Botón "Solicitar Corrida Financiera Detallada" que abre modal de captación de leads.
+- Botón flotante de WhatsApp personalizado.</pre>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 1: SELECTOR DE PERFIL (MÉDICO VS INVERSIONISTA) -->
+        <section id="perfil" class="space-y-6">
+            <div class="text-center space-y-3">
+                <h2 class="text-3xl font-heading font-bold text-white">
+                    Personaliza tu Experiencia en <span class="gradient-text">Nexus Medicus</span>
+                </h2>
+                <p class="text-slate-400 text-sm max-w-2xl mx-auto">
+                    Selecciona tu perfil para adaptar los datos clave, beneficios patrimoniales y la información técnica que verás en pantalla.
+                </p>
+            </div>
+
+            <!-- TOGGLE SWITCH -->
+            <div class="flex justify-center">
+                <div class="glass-card p-1.5 rounded-2xl inline-flex gap-2 border border-slate-800">
+                    <button id="btn-inversionista" onclick="setProfile('inversionista')" class="px-6 py-3 rounded-xl font-semibold text-sm transition-all flex items-center gap-2 bg-gradient-to-r from-medical-600 to-teal-500 text-white shadow-lg">
+                        <i class="fa-solid fa-chart-line"></i> Soy Inversionista
+                    </button>
+                    <button id="btn-doctor" onclick="setProfile('doctor')" class="px-6 py-3 rounded-xl font-semibold text-sm transition-all flex items-center gap-2 text-slate-400 hover:text-white">
+                        <i class="fa-solid fa-user-doctor"></i> Soy Médico / Especialista
+                    </button>
+                </div>
+            </div>
+
+            <!-- DYNAMIC DISPLAY CONTENT -->
+            <div id="profile-content" class="grid md:grid-cols-3 gap-6">
+                <!-- Se llena dinámicamente con JavaScript -->
+            </div>
+        </section>
+
+        <!-- SECCIÓN 2: CALCULADORA INTERACTIVA DE ROI Y NOI -->
+        <section id="calculadora" class="glass-card rounded-3xl p-6 md:p-10 border border-slate-800 space-y-8">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-6">
+                <div>
+                    <span class="text-xs font-semibold text-medical-500 uppercase tracking-widest">Simulador Financiero Nexus</span>
+                    <h2 class="text-2xl md:text-3xl font-heading font-bold text-white mt-1">Calculadora de ROI y Flujo Neto (NOI)</h2>
+                </div>
+                <div class="bg-slate-900/80 px-4 py-2 rounded-xl border border-slate-800 text-xs text-slate-400 flex items-center gap-2">
+                    <i class="fa-solid fa-shield-halved text-medical-500"></i> Basado en métricas reales de mercado en Zapopan
+                </div>
+            </div>
+
+            <div class="grid lg:grid-cols-12 gap-8 items-start">
+
+                <!-- CONTROLES IZQUIERDA -->
+                <div class="lg:col-span-5 space-y-6">
+
+                    <!-- SELECTOR DE MODELO -->
+                    <div class="space-y-2">
+                        <label class="text-sm font-semibold text-slate-300 flex justify-between">
+                            <span>Modelo de Consultorio:</span>
+                            <span id="label-m2" class="text-medical-400 font-bold">18 m²</span>
+                        </label>
+                        <select id="select-modelo" onchange="calculateROI()" class="w-full bg-slate-900 border border-slate-700 text-white rounded-xl px-4 py-3 text-base focus:outline-none focus:border-medical-500 transition-colors font-semibold">
+                            <option value="Ten">Ten - 18 m² ($2,205,000 MXN)</option>
+                            <option value="Twenty">Twenty - 22 m² ($3,279,000 MXN)</option>
+                            <option value="Thirty">Thirty - 33 m² ($4,368,000 MXN)</option>
+                            <option value="Forty">Forty - 46 m² ($5,783,000 MXN)</option>
+                            <option value="Fifty">Fifty - 53 m² ($6,415,000 MXN)</option>
+                            <option value="Ninety">Ninety - 95 m² ($11,536,000 MXN)</option>
+                            <option value="One Hundred">One Hundred - 111 m² ($13,539,000 MXN)</option>
+                            <option value="Two Hundred">Two Hundred - 223 m² ($25,742,000 MXN)</option>
+                        </select>
+                    </div>
+
+                    <!-- PORCENTAJE DE ENGANCHE -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-sm font-semibold text-slate-300">
+                            <span>Enganche Inicial:</span>
+                            <span id="label-enganche-pct" class="text-medical-400 font-bold">30%</span>
+                        </div>
+                        <input type="range" id="range-enganche" min="20" max="100" step="10" value="30" oninput="calculateROI()" class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-medical-500">
+                        <div class="flex justify-between text-xs text-slate-500">
+                            <span>20% (Mínimo)</span>
+                            <span>50%</span>
+                            <span>100% (Contado)</span>
+                        </div>
+                    </div>
+
+                    <!-- OCUPACIÓN ESTIMADA -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-sm font-semibold text-slate-300">
+                            <span>Ocupación Proyectada:</span>
+                            <span id="label-ocupacion-pct" class="text-medical-400 font-bold">92%</span>
+                        </div>
+                        <input type="range" id="range-ocupacion" min="70" max="100" step="2" value="92" oninput="calculateROI()" class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-medical-500">
+                        <div class="flex justify-between text-xs text-slate-500">
+                            <span>70% (Conservador)</span>
+                            <span>92% (Promedio Valle Real)</span>
+                            <span>100% (Optimo)</span>
+                        </div>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 text-xs text-slate-400 space-y-1">
+                        <div class="flex justify-between">
+                            <span>Mantenimiento Estimado:</span>
+                            <span id="val-mantenimiento" class="text-slate-200 font-mono">-$1,260 MXN/mes</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Ajuste por Vacancia:</span>
+                            <span id="val-vacancia" class="text-slate-200 font-mono">-$1,512 MXN/mes</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- DASHBOARD DE RESULTADOS DER. -->
+                <div class="lg:col-span-7 bg-navy-950 rounded-2xl p-6 md:p-8 border border-slate-800 space-y-6">
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
+                            <span class="text-xs text-slate-400 font-medium">Inversión Total</span>
+                            <div id="res-inversion" class="text-xl md:text-2xl font-bold font-heading text-white">$2,205,000</div>
+                            <span class="text-[11px] text-slate-500">Precio de lista</span>
+                        </div>
+
+                        <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800 space-y-1">
+                            <span class="text-xs text-slate-400 font-medium">Enganche Requerido</span>
+                            <div id="res-enganche" class="text-xl md:text-2xl font-bold font-heading text-medical-400">$661,500</div>
+                            <span id="sub-enganche" class="text-[11px] text-slate-500">Equivalente al 30%</span>
+                        </div>
+                    </div>
+
+                    <div class="p-5 rounded-2xl bg-gradient-to-br from-medical-900/30 via-slate-900 to-slate-900 border border-medical-500/30 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <span class="text-xs uppercase tracking-wider text-medical-400 font-bold">Ingreso Neto Operativo (NOI)</span>
+                                <div id="res-noi-mensual" class="text-3xl md:text-4xl font-extrabold font-heading text-white">$16,128 <span class="text-base font-normal text-slate-400">/ mes</span></div>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-xs text-slate-400">NOI Anualizado</span>
+                                <div id="res-noi-anual" class="text-lg font-bold text-teal-300">$193,536</div>
+                            </div>
+                        </div>
+
+                        <div class="pt-3 border-t border-slate-800/80 grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <span class="text-slate-400 text-xs">Cap Rate Estimado:</span>
+                                <div id="res-caprate" class="text-xl font-bold text-white">8.78%</div>
+                            </div>
+                            <div>
+                                <span class="text-slate-400 text-xs">ROI Proyectado:</span>
+                                <div id="res-roi" class="text-xl font-bold text-gold-400">11.39%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ACCIÓN DIRECTA -->
+                    <div class="pt-2 flex flex-col sm:flex-row gap-3">
+                        <button onclick="openLeadModal()" class="flex-1 bg-gradient-to-r from-medical-600 to-teal-500 hover:from-medical-500 hover:to-teal-400 text-white font-bold py-3.5 px-6 rounded-xl text-center shadow-lg shadow-medical-600/30 transition-all text-sm flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-file-pdf"></i> Solicitar Corrida Financiera en PDF
+                        </button>
+                        <a id="btn-whatsapp-calc" href="#" target="_blank" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 px-5 rounded-xl text-center transition-all text-sm flex items-center justify-center gap-2 shrink-0">
+                            <i class="fa-brands fa-whatsapp text-lg"></i> Consultar por WhatsApp
+                        </a>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECCIÓN 3: UBICACIÓN ESTRATÉGICA EN VALLE REAL ZAPOPAN -->
+        <section id="ubicacion" class="space-y-6">
+            <div class="text-center space-y-3">
+                <span class="text-xs font-semibold text-medical-500 uppercase tracking-widest">Zona de Alta Plusvalía y Prestigio</span>
+                <h2 class="text-3xl font-heading font-bold text-white">
+                    Ubicación Privilegiada en <span class="gradient-text">Valle Real, Zapopan</span>
+                </h2>
+                <p class="text-slate-400 text-sm max-w-2xl mx-auto">
+                    Avenida Central Guillermo González Camarena #500. Rodéate de los centros médicos y residenciales de mayor poder adquisitivo en Jalisco.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-12 gap-6 items-stretch">
+
+                <!-- CARACTERÍSTICAS DE LA ZONA -->
+                <div class="md:col-span-5 space-y-4 flex flex-col justify-between">
+                    <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-3">
+                        <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center text-lg">
+                            <i class="fa-solid fa-hospital"></i>
+                        </div>
+                        <h3 class="font-heading font-bold text-lg text-white">Corredor Médico de Alto Nivel</h3>
+                        <p class="text-slate-400 text-xs leading-relaxed">
+                            Cercanía inmediata a centros hospitalarios de referencia como Hospital Real San José, Puerta de Hierro y zonas de consulta especializada.
+                        </p>
+                    </div>
+
+                    <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-3">
+                        <div class="w-10 h-10 rounded-xl bg-gold-500/10 text-gold-400 flex items-center justify-center text-lg">
+                            <i class="fa-solid fa-user-group"></i>
+                        </div>
+                        <h3 class="font-heading font-bold text-lg text-white">Mercado Paciente NSE A/B</h3>
+                        <p class="text-slate-400 text-xs leading-relaxed">
+                            Acceso directo a residentes de Valle Real, Jardines del Valle, Solares y zona Andares con capacidad económica para consulta privada.
+                        </p>
+                    </div>
+
+                    <div class="glass-card p-5 rounded-2xl border border-slate-800 space-y-3">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-lg">
+                            <i class="fa-solid fa-square-parking"></i>
+                        </div>
+                        <h3 class="font-heading font-bold text-lg text-white">Accesibilidad y Estacionamiento</h3>
+                        <p class="text-slate-400 text-xs leading-relaxed">
+                            Fácil conectividad por Av. Servidor Público y Periférico Norte. Amplio espacio de estacionamiento para médicos y pacientes.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- MAPA VIRTUAL REPRESENTATIVO -->
+                <div class="md:col-span-7 glass-card rounded-3xl p-4 border border-slate-800 relative overflow-hidden flex flex-col justify-between min-h-[350px]">
+
+                    <div class="absolute inset-0 bg-slate-900 opacity-90">
+                        <!-- Mapa Estilizado SVG / Canvas Placeholder -->
+                        <div class="w-full h-full relative flex items-center justify-center bg-[radial-gradient(#1e293b_1px,transparent_1px)] [background-size:16px_16px]">
+
+                            <!-- PIN CENTRAL -->
+                            <div class="relative z-10 text-center space-y-2">
+                                <div class="w-14 h-14 bg-gradient-to-tr from-medical-600 to-sky-500 rounded-full flex items-center justify-center text-white text-2xl shadow-2xl shadow-medical-500/50 mx-auto animate-bounce">
+                                    <i class="fa-solid fa-location-dot"></i>
+                                </div>
+                                <div class="bg-navy-950 px-4 py-2 rounded-xl border border-medical-500/40 shadow-xl">
+                                    <div class="font-heading font-bold text-sm text-white">NEXUS MEDICUS VALLE REAL</div>
+                                    <div class="text-[11px] text-slate-400">Av. Guillermo González Camarena #500</div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="relative z-20 flex justify-between items-end w-full">
+                        <span class="bg-navy-950/90 text-slate-300 text-xs px-3 py-1.5 rounded-lg border border-slate-800">
+                            <i class="fa-solid fa-compass text-medical-500"></i> Zapopan, Jalisco
+                        </span>
+                        <a href="https://maps.google.com/?q=Avenida+Central+Guillermo+Gonzalez+Camarena+500+Valle+Real+Zapopan" target="_blank" class="bg-white hover:bg-slate-100 text-navy-900 font-bold px-4 py-2.5 rounded-xl text-xs transition-all shadow-lg flex items-center gap-2">
+                            <i class="fa-solid fa-map-location-dot"></i> Abrir en Google Maps
+                        </a>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL DE CAPTACIÓN DE LEADS -->
+    <div id="modal-lead" class="fixed inset-0 z-50 bg-navy-950/80 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="glass-card max-w-md w-full rounded-3xl p-6 md:p-8 border border-slate-700 relative space-y-6">
+
+            <button onclick="closeLeadModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="space-y-2">
+                <div class="w-12 h-12 rounded-2xl bg-medical-500/20 text-medical-400 flex items-center justify-center text-xl">
+                    <i class="fa-solid fa-file-invoice-dollar"></i>
+                </div>
+                <h3 class="text-xl font-heading font-bold text-white">Solicitar Corrida Financiera</h3>
+                <p class="text-xs text-slate-400">
+                    Ingresa tus datos para enviarte la propuesta detallada del modelo <span id="modal-modelo-name" class="text-medical-400 font-bold">Ten</span> a tu correo o WhatsApp.
+                </p>
+            </div>
+
+            <form onsubmit="handleLeadSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="text-xs font-semibold text-slate-300 block mb-1">Nombre Completo</label>
+                    <input type="text" required placeholder="Dr. Alejandro Gómez" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-medical-500">
+                </div>
+
+                <div>
+                    <label class="text-xs font-semibold text-slate-300 block mb-1">Teléfono / WhatsApp</label>
+                    <input type="tel" required placeholder="33 1234 5678" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-medical-500">
+                </div>
+
+                <div>
+                    <label class="text-xs font-semibold text-slate-300 block mb-1">Correo Electrónico</label>
+                    <input type="email" required placeholder="doctor@ejemplo.com" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-medical-500">
+                </div>
+
+                <div>
+                    <label class="text-xs font-semibold text-slate-300 block mb-1">Perfil Principal</label>
+                    <select class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-medical-500">
+                        <option value="doctor">Médico / Especialista (Para uso propio)</option>
+                        <option value="inversionista">Inversionista Patrimonial (Para renta)</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="w-full bg-gradient-to-r from-medical-600 to-teal-500 hover:from-medical-500 hover:to-teal-400 text-white font-bold py-3 rounded-xl text-sm transition-all shadow-lg shadow-medical-600/30">
+                    <i class="fa-solid fa-paper-plane mr-2"></i> Recibir Información Inmediata
+                </button>
+            </form>
+
+        </div>
+    </div>
+
+    <!-- LOGIC & DATA SCRIPT -->
+    <script>
+        // TABLA DE DATOS DE LOS 8 MODELOS
+        const modelosData = {
+            "Ten": { m2: 18, precio: 2205000, renta: 18900, vacancia: 1512, mantto: 1260, noi: 16128, caprate: 8.78, roi: 11.39 },
+            "Twenty": { m2: 22, precio: 3279000, renta: 23100, vacancia: 1848, mantto: 1540, noi: 19712, caprate: 7.21, roi: 13.86 },
+            "Thirty": { m2: 33, precio: 4368000, renta: 32340, vacancia: 2587, mantto: 2310, noi: 27443, caprate: 7.54, roi: 13.26 },
+            "Forty": { m2: 46, precio: 5783000, renta: 41400, vacancia: 3312, mantto: 3220, noi: 34868, caprate: 7.24, roi: 13.82 },
+            "Fifty": { m2: 53, precio: 6415000, renta: 45050, vacancia: 3604, mantto: 3710, noi: 37736, caprate: 7.06, roi: 14.17 },
+            "Ninety": { m2: 95, precio: 11536000, renta: 80750, vacancia: 6460, mantto: 6650, noi: 67640, caprate: 7.04, roi: 14.21 },
+            "One Hundred": { m2: 111, precio: 13539000, renta: 83250, vacancia: 6660, mantto: 7770, noi: 68820, caprate: 6.10, roi: 16.39 },
+            "Two Hundred": { m2: 223, precio: 25742000, renta: 156100, vacancia: 12488, mantto: 15610, noi: 128002, caprate: 5.97, roi: 16.76 }
+        };
+
+        // PROFILE DATA CONFIG
+        const profileContentConfig = {
+            inversionista: [
+                { icon: "fa-chart-line", color: "text-emerald-400", title: "Cap Rate Superior", desc: "Rendimientos netos proyectados de hasta 8.78% anual, superando ampliamente arrendamientos residenciales." },
+                { icon: "fa-shield-halved", color: "text-blue-400", title: "Contratos de Larga Duración", desc: "Inquilinos médicos con alta estabilidad operativa y baja rotación comparado con locales comerciales." },
+                { icon: "fa-arrow-trend-up", color: "text-gold-400", title: "Plusvalía Zapopan", desc: "Ubicación estratégica sobre Av. González Camarena con apreciación constante del valor por m²." }
+            ],
+            doctor: [
+                { icon: "fa-stethoscope", color: "text-medical-400", title: "Espacio e Identidad Propia", desc: "Consultorios diseñados bajo normativas de salud para ejercer con total libertad profesional." },
+                { icon: "fa-certificate", color: "text-purple-400", title: "Permisos COFEPRIS Facilitados", desc: "Infraestructura con lineamientos requeridos para acelerar la habilitación de tu consultorio." },
+                { icon: "fa-building-circle-check", color: "text-teal-400", title: "Prestigio Valle Real", desc: "Proyecta máxima confianza a tus pacientes en la zona de mayor estatus en Zapopan." }
+            ]
+        };
+
+        let currentProfile = 'inversionista';
+
+        function setProfile(profile) {
+            currentProfile = profile;
+            const btnInv = document.getElementById('btn-inversionista');
+            const btnDoc = document.getElementById('btn-doctor');
+            const container = document.getElementById('profile-content');
+
+            if (profile === 'inversionista') {
+                btnInv.className = "px-6 py-3 rounded-xl font-semibold text-sm transition-all flex items-center gap-2 bg-gradient-to-r from-medical-600 to-teal-500 text-white shadow-lg";
+                btnDoc.className = "px-6 py-3 rounded-xl font-semibold text-sm transition-all flex items-center gap-2 text-slate-400 hover:text-white";
+            } else {
+                btnDoc.className = "px-6 py-3 rounded-xl font-semibold text-sm transition-all flex items-center gap-2 bg-gradient-to-r from-medical-600 to-teal-500 text-white shadow-lg";
+                btnInv.className = "px-6 py-3 rounded-xl font-semibold text-sm transition-all flex items-center gap-2 text-slate-400 hover:text-white";
+            }
+
+            container.innerHTML = profileContentConfig[profile].map(item => `
+                <div class="glass-card p-6 rounded-2xl border border-slate-800 space-y-3">
+                    <div class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-center text-xl ${item.color}">
+                        <i class="fa-solid ${item.icon}"></i>
+                    </div>
+                    <h3 class="font-heading font-bold text-lg text-white">${item.title}</h3>
+                    <p class="text-slate-400 text-xs leading-relaxed">${item.desc}</p>
+                </div>
+            `).join('');
+        }
+
+        // CÁLCULO DINÁMICO DE ROI
+        function calculateROI() {
+            const modeloKey = document.getElementById('select-modelo').value;
+            const enganchePct = parseInt(document.getElementById('range-enganche').value);
+            const ocupacionPct = parseInt(document.getElementById('range-ocupacion').value);
+
+            const data = modelosData[modeloKey];
+
+            // LABELS UI
+            document.getElementById('label-m2').innerText = `${data.m2} m²`;
+            document.getElementById('label-enganche-pct').innerText = `${enganchePct}%`;
+            document.getElementById('label-ocupacion-pct').innerText = `${ocupacionPct}%`;
+
+            // CÁLCULOS
+            const inversionTotal = data.precio;
+            const engancheMonto = (inversionTotal * enganchePct) / 100;
+
+            // Factor de ajuste por ocupación seleccionada
+            const factorOcupacion = ocupacionPct / 100;
+            const rentaAjustada = data.renta * factorOcupacion;
+            const vacanciaAjustada = data.renta * (1 - factorOcupacion);
+            const noiMensual = rentaAjustada - data.mantto;
+            const noiAnual = noiMensual * 12;
+
+            const capRate = ((noiAnual / inversionTotal) * 100).toFixed(2);
+            const roiProyectado = (data.roi * (ocupacionPct / 92)).toFixed(2);
+
+            // ACTUALIZACIÓN DE ELEMENTOS UI
+            document.getElementById('res-inversion').innerText = `$${inversionTotal.toLocaleString()} MXN`;
+            document.getElementById('res-enganche').innerText = `$${engancheMonto.toLocaleString()} MXN`;
+            document.getElementById('sub-enganche').innerText = `Equivalente al ${enganchePct}%`;
+
+            document.getElementById('res-noi-mensual').innerHTML = `$${Math.round(noiMensual).toLocaleString()} <span class="text-base font-normal text-slate-400">/ mes</span>`;
+            document.getElementById('res-noi-anual').innerText = `$${Math.round(noiAnual).toLocaleString()} MXN`;
+
+            document.getElementById('val-mantenimiento').innerText = `-$${data.mantto.toLocaleString()} MXN/mes`;
+            document.getElementById('val-vacancia').innerText = `-$${Math.round(vacanciaAjustada).toLocaleString()} MXN/mes`;
+
+            document.getElementById('res-caprate').innerText = `${capRate}%`;
+            document.getElementById('res-roi').innerText = `${roiProyectado}%`;
+
+            document.getElementById('modal-modelo-name').innerText = `${modeloKey} (${data.m2} m²)`;
+
+            // WHATSAPP URL
+            const mensajeWA = encodeURIComponent(`Hola Nexus Medicus, me interesa cotizar el modelo ${modeloKey} (${data.m2}m²) en Valle Real con enganche de $${engancheMonto.toLocaleString()} MXN.`);
+            document.getElementById('btn-whatsapp-calc').href = `https://wa.me/523300000000?text=${mensajeWA}`;
+        }
+
+        // COPIAR PROMPT
+        function copyPrompt() {
+            const codeText = document.getElementById('prompt-code').innerText;
+            navigator.clipboard.writeText(codeText);
+
+            const icon = document.getElementById('copy-icon');
+            const text = document.getElementById('copy-text');
+
+            icon.className = "fa-solid fa-check text-emerald-400";
+            text.innerText = "¡Prompt Copiado!";
+
+            setTimeout(() => {
+                icon.className = "fa-solid fa-copy text-medical-500";
+                text.innerText = "Copiar Prompt de la Fase 2";
+            }, 3000);
+        }
+
+        // MODAL HANDLERS
+        function openLeadModal() {
+            document.getElementById('modal-lead').classList.remove('hidden');
+            document.getElementById('modal-lead').classList.add('flex');
+        }
+
+        function closeLeadModal() {
+            document.getElementById('modal-lead').classList.remove('flex');
+            document.getElementById('modal-lead').classList.add('hidden');
+        }
+
+        function handleLeadSubmit(e) {
+            e.preventDefault();
+            alert("¡Gracias por tu interés! Un asesor de Nexus Medicus se comunicará contigo con la corrida financiera detallada.");
+            closeLeadModal();
+        }
+
+        // INITIALIZE
+        window.onload = function() {
+            setProfile('inversionista');
+            calculateROI();
+        };
+    </script>
+
+</body>
+</html>

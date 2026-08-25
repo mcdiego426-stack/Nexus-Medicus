@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Medicus - Consultorios Médicos Premium en Valle Real, Zapopan</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Poppins', sans-serif;
+        }
+        body {
+            background-color: #fafafa;
+        }
+        .btn-primary {
+            @apply px-8 py-4 bg-gradient-to-r from-blue-900 to-blue-800 text-white font-semibold rounded-lg transition-all duration-300 hover:from-blue-800 hover:to-blue-700 hover:shadow-lg active:scale-95;
+        }
+        .btn-secondary {
+            @apply px-8 py-4 border-2 border-blue-900 text-blue-900 font-semibold rounded-lg transition-all duration-300 hover:bg-blue-50 hover:shadow-md active:scale-95;
+        }
+        .btn-success {
+            @apply px-8 py-4 bg-green-600 text-white font-semibold rounded-lg transition-all duration-300 hover:bg-green-700 hover:shadow-lg active:scale-95;
+        }
+        .card-model {
+            @apply bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-200 overflow-hidden;
+        }
+        .price-highlight {
+            @apply text-3xl font-bold text-blue-900;
+        }
+        .modal-overlay {
+            @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden;
+        }
+        .modal-overlay.active {
+            @apply flex;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- NAVBAR -->
+    <nav class="fixed w-full top-0 bg-white shadow-sm z-40">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-10 h-10 bg-gradient-to-r from-blue-900 to-green-600 rounded-lg flex items-center justify-center">
+                    <span class="text-white font-bold text-lg">NM</span>
+                </div>
+                <span class="text-xl font-bold text-blue-900">Nexus Medicus</span>
+            </div>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#modelos" class="text-gray-700 font-medium hover:text-blue-900 transition">Modelos</a>
+                <a href="#ubicacion" class="text-gray-700 font-medium hover:text-blue-900 transition">Ubicación</a>
+                <a href="#rendimiento" class="text-gray-700 font-medium hover:text-blue-900 transition">Rendimiento</a>
+            </div>
+            <button onclick="openModal()" class="btn-primary text-sm">Agendar Cita</button>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="pt-32 pb-20 px-6 bg-gradient-to-b from-gray-50 to-white">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-12">
+                <h1 class="text-5xl md:text-6xl font-bold text-blue-900 leading-tight mb-6">
+                    Invierte en la Zona Médica de Mayor Plusvalía en Zapopan
+                </h1>
+                <p class="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed max-w-4xl mx-auto">
+                    Consultorios médicos premium en <span class="font-semibold text-green-600">Valle Real</span>, listos para operación inmediata con permisos de salud y COFEPRIS incluidos. Retornos de <span class="font-bold text-green-600">11% a 16% ROI</span> anual.
+                </p>
+                <div class="flex flex-col md:flex-row gap-6 justify-center items-center">
+                    <button onclick="scrollToModelos()" class="btn-primary text-lg">
+                        Ver Consultorios Disponibles
+                    </button>
+                    <button onclick="openDownloadModal()" class="btn-secondary text-lg">
+                        Descargar Brochure & Corrida Financiera
+                    </button>
+                </div>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8 mt-16">
+                <div class="bg-white p-8 rounded-xl border border-gray-200 text-center">
+                    <div class="text-4xl font-bold text-green-600 mb-2">100%</div>
+                    <p class="text-gray-700 font-medium">Listos para Permisos de Salud</p>
+                </div>
+                <div class="bg-white p-8 rounded-xl border border-gray-200 text-center">
+                    <div class="text-4xl font-bold text-blue-900 mb-2">AAA</div>
+                    <p class="text-gray-700 font-medium">Ubicación Premium en Valle Real</p>
+                </div>
+                <div class="bg-white p-8 rounded-xl border border-gray-200 text-center">
+                    <div class="text-4xl font-bold text-green-600 mb-2">14%+</div>
+                    <p class="text-gray-700 font-medium">Retornos Promedio Garantizados</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BANNER DE VALOR -->
+    <section id="rendimiento" class="py-16 px-6 bg-gradient-to-r from-blue-900 to-blue-800">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-4xl font-bold text-white mb-12 text-center">¿Por qué Nexus Medicus?</h2>
+            <div class="grid md:grid-cols-4 gap-6">
+                <div class="bg-blue-800 p-8 rounded-lg border border-blue-700">
+                    <h3 class="text-xl font-bold text-white mb-3">✓ Ubicación Estratégica</h3>
+                    <p class="text-blue-100">Avenida Central en Valle Real, la zona de mayor demanda médica especializada en Zapopan.</p>
+                </div>
+                <div class="bg-blue-800 p-8 rounded-lg border border-blue-700">
+                    <h3 class="text-xl font-bold text-white mb-3">✓ Documentación Completa</h3>
+                    <p class="text-blue-100">Permisos COFEPRIS y sanitarios listos. Inicia operaciones en 48 horas.</p>
+                </div>
+                <div class="bg-blue-800 p-8 rounded-lg border border-blue-700">
+                    <h3 class="text-xl font-bold text-white mb-3">✓ Alta Demanda de Pacientes</h3>
+                    <p class="text-blue-100">Red de médicos especialistas generadora de flujo continuo de pacientes.</p>
+                </div>
+                <div class="bg-blue-800 p-8 rounded-lg border border-blue-700">
+                    <h3 class="text-xl font-bold text-white mb-3">✓ Retornos Atractivos</h3>
+                    <p class="text-blue-100">ROI de 11% a 16% anual con Cap Rates de 5.97% a 8.78%.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CATÁLOGO DE MODELOS -->
+    <section id="modelos" class="py-20 px-6">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-4xl font-bold text-blue-900 mb-4 text-center">Catálogo de Consultorios</h2>
+            <p class="text-xl text-gray-600 text-center mb-16">Selecciona el modelo que se adapte a tus necesidades de inversión</p>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- MODELO TEN -->
+                <div class="card-model">
+                    <div class="bg-gradient-to-r from-blue-900 to-blue-800 p-6 text-white">
+                        <h3 class="text-2xl font-bold">Ten</h3>
+                        <div class="mt-2 text-sm text-blue-100">18 m²</div>
+                    </div>
+                    <div class="p-6">
+                        <div class="mb-4">
+                            <div class="text-sm text-gray-500 mb-1">Precio Total</div>
+                            <div class="price-highlight">$2,205,000</div>
+                            <div class="text-xs text-gray-600 mt-1">MXN</div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 mb-6 py-4 border-y border-gray-200">
+                            <div>
+                                <div class="text-xs text-gray-500 uppercase">Renta Est.</div>
+                                <div class="font-bold text-green-600">$18,900/mes</div>
+                            </div>
+                            <div>
+                                <div class="text-xs text-gray-500 uppercase">ROI</div>
+                                <div class="font-bold text-green-600">11.39%</div>
+                            </div>
+                        </div>
+                        <div class="mb-6">
+                            <div class="text-xs text-gray-500 uppercase mb-1">Cap Rate</div>
+                            <div class="font-bold text-blue-900">8.78%</div>
+                        </div>
+                        <span class="inline-block bg-green-100 text-green-700 text-xs font-semibold px-3 py-1 rounded-full mb-6">Disponible</span>
+                        <div class="flex flex-col gap-3">
+                            <button onclick="openModal()" class="btn-primary text-sm w-full">Agendar Cita</button>
+                            <button onclick="openQuoteModal()" class="btn-secondary text-sm w-full">Solicitar Cotización</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MODELO TWENTY -->
+                <div class="card-model">
+                    <div class="bg-gradient-to-r from-blue-900 to-blue-800 p-6 text-white">
+                        <h3 class="text-2xl font-bold">Twenty</h3>
+                        <div class="mt-2 text-sm text-blue-100">22 m²</div>
+                    </div>
+                    <div class="p-6">
+                        <div class="mb-4">
+                            <div class="text-sm text-gray-500 mb-1">Precio Total</div>
+                            <div class="price-highlight">$3,279,000</div>
+                            <div class="text-xs text-gray-600 mt-1">MXN</div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 mb-6 py-4 border-y border-gray-200">
+                            <div>
+                                <div class="text-xs text-gray-500 uppercase">Renta Est.</div>
+                                <div class="font-bold text-green-600">$23,100/mes</div>
+                            </div>
+                            <div>
+                                <div class="text-xs text-gray-500 uppercase">ROI</div>
+                                <div class="font-bold text-green-600">13.86%</div>
+                            </div>
+                        </div>
+                        <div class="mb-6">
+                            <div class="text-xs text-gray-500 uppercase mb-1">Cap Rate</div>
+                            <div class="font-bold text-blue-900">7.21%</div>
+                        </div>
+                        <span class="inline-block bg-green-100 text-green-700 text-xs font-semibold px-3 py-1 rounded-full mb-6">Disponible</span>
+                        <div class="flex flex-col gap-3">
+                            <button onclick="openModal()" class="btn-primary text-sm w-full">Agendar Cita</button>
+                            <button onclick="openQuoteModal()" class="btn-secondary text-sm w-full">Solicitar Cotización</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MODELO THIRTY -->
+                <div class="card-model">
+                    <div class="bg-gradient-to-r from-blue-900 to-blue-800 p-6 text-white">
+                        <h3 class="text-2xl font-bold">Thirty</h3>
+                        <div class="mt-2 text-sm text-blue-100">33 m²</div>
+                    </div>
+                    <div class="p-6">
+                        <div class="mb-4">
+                            <div class="text-sm text-gray-500 mb-1">Precio Total</div>
+                            <div class="price-highlight">$4,368,000</div>
+                            <div class="text-xs text-gray-600 mt-1">MXN</div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 mb-6 py-4 border-y border-gray-200">
+                            <div>
+                                <div class="text-xs text-gray-500 uppercase">Renta Est.</div>
+                                <div class="font-bold text-green-600">$32,340/mes</div>
+                            </div>
+                            <div>
+                                <div class="text-xs text-gray-500 uppercase">ROI</div>
+                                <div class="font-bold text-green-600">13.26%</div>
+                            </div>
+                        </div>
+                        <div class="mb-6">
+                            <div class="text-xs text-gray-500 uppercase mb-1">Cap Rate</div>
+                            <div class="font-bold text-blue-900">7.54%</div>
+                        </div>
+                        <span class="inline-block bg-green-100 text-green-700 text-xs font-semibold px-3 py-1 rounded-full mb-6">Disponible</span>
+                        <div class="flex flex-col gap-3">
+                            <button onclick="openModal()" class="btn-primary text-sm w-full">Agendar Cita</button>
+                            <button onclick="openQuoteModal()" class="btn-secondary text-sm w-full">Solicitar Cotización</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MODELO FORTY -->
+                <div class="card-model">
+                    <div class="bg-gradient-to-r from-blue-900 to-blue-800 p-6 text-white">
+                        <h3 class="text-2xl font-bold">Forty</h3>
+                        <div class="mt-2 text-sm text-blue-100">46 m²</div>
+                    </div>
+                    <div class="p-6">
+                        <div class="mb-4">
+                            <div class="text-sm text-gray-500 mb-1">Precio Total</div>
+                            <div class="price-highlight">$5,783,000</div>
+                            <div class="text-xs text-gray-600 mt-1">MXN</div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 mb-6 py-4 border-y border-gray-200">
+                            <div>
+                                <div class="text-xs text-gray-500 uppercase">Renta Est.</div>
+                                <div class="font-bold text-green-600">$41,400/mes</div>
+                            </div>
+                            <div>
+                                <div class="text-xs text-gray-500 uppercase">ROI</div>
+                                <div class="font-bold text-green-600">13.82%</div>
+                            </div>
+                        </div>
+                        <div class="mb-6">
+                            <div class="text-xs text-gray-500 uppercase mb-1">Cap Rate</div>
+                            <div class="font-bold text-blue-900">7.24%</div>
+                        </div>
+                        <span class="inline-block bg-green-100 text-green-700 text-xs font-semibold px-3 py-1 rounded-full mb-6">Disponible</span>
+                        <div class="flex flex-col gap-3">
+                            <button onclick="openModal()" class="btn-primary text-sm w-full">Agendar Cita</button>
+                            <button onclick="openQuoteModal()" class="btn-secondary text-sm w-full">Solicitar Cotización</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MODELO FIFTY -->
+                <div class="card-model">
+                    <div class="bg-gradient-to-r from-blue-900 to-blue-800 p-6 text-white">
+                        <h3 class="text-2xl font-bold">Fifty</h3>
+                        <div class="mt-2 text-sm text-blue-100">53 m²</div>
+                    </div>
+                    <div class="p-6">
+                        <div class="mb-4">
+                            <div class="text-sm text-gray-500 mb-1">Precio Total</div>
+                            <div class="price-highlight">$6,415,000</div>
+                            <div class="text-xs text-gray-600 mt-1">MXN</div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 mb-6 py-4 border-y border-gray-200">
+                            <div>
+                                <div class="text-xs text-gray-500 uppercase">Renta Est.</div>
+                                <div class="font-bold text-green-600">$45,050/mes</div>
+                            </div>
+                            <div>
+                                <div class="text-xs text-gray-500 uppercase">ROI</div>
+                                <div class="font-bold text-green-600">14.17%</div>
+                            </div>
+                        </div>
+                        <div class="mb-6">
+                            <div class="text-xs text-gray-500 uppercase mb-1">Cap Rate</div>
+                            <div class="font-bold text-blue-900">7.06%</div>
+                        </div>
+                        <span class="inline-block bg-green-100 text-green-700 text-xs font-semibold px-3 py-1 rounded-full mb-6">Disponible</span>
+                        <div class="flex flex-col gap-3">
+                            <button onclick="openModal()" class="btn-primary text-sm w-full">Agendar Cita</button>
+                            <button onclick="openQuoteModal()" class="btn-secondary text-sm w-full">Solicitar Cotización</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MODELO NINETY -->
+                <div class="card-model">
+                    <div class="bg-gradient-to-r from-blue-900 to-blue-800 p-6 text-white">
+                        <h3 class="text-2xl font-bold">Ninety</h3>
+                        <div class="mt-2 text-sm text-blue-100">95 m²</div>
+                    </div>
+                    <div class="p-6">
+                        <div class="mb-4">
+                            <div class="text-sm text-gray-500 mb-1">Precio Total</div>
+                            <div class="price-highlight">$11,536,000</div>
+                            <div class="text-xs text-gray-600 mt-1">MXN</div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 mb-6 py-4 border-y border-gray-200">
+                            <div>
+                                <div class="text-xs text-gray-500 uppercase">Renta Est.</div>
+                                <div class="font-bold text-green-600">$80,750/mes</div>
+                            </div>
+                            <div>
+                                <div class="text-xs text-gray-500 uppercase">ROI</div>
+                                <div class="font-bold text-green-600">14.21%</div>
+                            </div>
+                        </div>
+                        <div class="mb-6">
+                            <div class="text-xs text-gray-500 uppercase mb-1">Cap Rate</div>
+                            <div class="font-bold text-blue-900">7.04%</div>
+                        </div>
+                        <span class="inline-block bg-green-100 text-green-700 text-xs font-semibold px-3 py-1 rounded-full mb-6">Disponible</span>
+                        <div class="flex flex-col gap-3">
+                            <button onclick="openModal()" class="btn-primary text-sm w-full">Agendar Cita</button>
+                            <button onclick="openQuoteModal()" class="btn-secondary text-sm w-full">Solicitar Cotización</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MODELO ONE HUNDRED -->
+                <div class="card-model">
+                    <div class="bg-gradient-to-r from-blue-900 to-blue-800 p-6 text-white">
+                        <h3 class="text-2xl font-bold">One Hundred</h3>
+                        <div class="mt-2 text-sm text-blue-100">111 m²</div>
+                    </div>
+                    <div class="p-6">
+                        <div class="mb-4">
+                            <div class="text-sm text-gray-500 mb-1">Precio Total</div>
+                            <div class="price-highlight">$13,539,000</div>
+                            <div class="text-xs text-gray-600 mt-1">MXN</div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 mb-6 py-4 border-y border-gray-200">
+                            <div>
+                                <div class="text-xs text-gray-500 uppercase">Renta Est.</div>
+                                <div class="font-bold text-green-600">$83,250/mes</div>
+                            </div>
+                            <div>
+                                <div class="text-xs text-gray-500 uppercase">ROI</div>
+                                <div class="font-bold text-green-600">16.39%</div>
+                            </div>
+                        </div>
+                        <div class="mb-6">
+                            <div class="text-xs text-gray-500 uppercase mb-1">Cap Rate</div>
+                            <div class="font-bold text-blue-900">6.10%</div>
+                        </div>
+                        <span class="inline-block bg-green-100 text-green-700 text-xs font-semibold px-3 py-1 rounded-full mb-6">Disponible</span>
+                        <div class="flex flex-col gap-3">
+                            <button onclick="openModal()" class="btn-primary text-sm w-full">Agendar Cita</button>
+                            <button onclick="openQuoteModal()" class="btn-secondary text-sm w-full">Solicitar Cotización</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MODELO TWO HUNDRED -->
+                <div class="card-model">
+                    <div class="bg-gradient-to-r from-blue-900 to-blue-800 p-6 text-white">
+                        <h3 class="text-2xl font-bold">Two Hundred</h3>
+                        <div class="mt-2 text-sm text-blue-100">223 m²</div>
+                    </div>
+                    <div class="p-6">
+                        <div class="mb-4">
+                            <div class="text-sm text-gray-500 mb-1">Precio Total</div>
+                            <div class="price-highlight">$25,742,000</div>
+                            <div class="text-xs text-gray-600 mt-1">MXN</div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 mb-6 py-4 border-y border-gray-200">
+                            <div>
+                                <div class="text-xs text-gray-500 uppercase">Renta Est.</div>
+                                <div class="font-bold text-green-600">$156,100/mes</div>
+                            </div>
+                            <div>
+                                <div class="text-xs text-gray-500 uppercase">ROI</div>
+                                <div class="font-bold text-green-600">16.76%</div>
+                            </div>
+                        </div>
+                        <div class="mb-6">
+                            <div class="text-xs text-gray-500 uppercase mb-1">Cap Rate</div>
+                            <div class="font-bold text-blue-900">5.97%</div>
+                        </div>
+                        <span class="inline-block bg-green-100 text-green-700 text-xs font-semibold px-3 py-1 rounded-full mb-6">Disponible</span>
+                        <div class="flex flex-col gap-3">
+                            <button onclick="openModal()" class="btn-primary text-sm w-full">Agendar Cita</button>
+                            <button onclick="openQuoteModal()" class="btn-secondary text-sm w-full">Solicitar Cotización</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- UBICACIÓN -->
+    <section id="ubicacion" class="py-20 px-6 bg-white">
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-4xl font-bold text-blue-900 mb-12 text-center">Ubicación Estratégica</h2>
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h3 class="text-3xl font-bold text-blue-900 mb-6">Valle Real, Zapopan</h3>
+                    <p class="text-lg text-gray-700 mb-6 leading-relaxed">
+                        <span class="font-semibold">Avenida Central Guillermo Gonzalez Camarena #500</span><br>
+                        Valle Real, 45136 Zapopan, Jalisco, México
+                    </p>
+                    <div class="space-y-4">
+                        <div class="flex gap-4 items-start">
+                            <div class="text-2xl text-green-600">📍</div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">Zona de Alto Valor</h4>
+                                <p class="text-gray-600">Ubicación AAA, área con mayor apreciación en Guadalajara Metropolitana.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 items-start">
+                            <div class="text-2xl text-green-600">🏥</div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">Polo Médico Consolidado</h4>
+                                <p class="text-gray-600">Rodeado de hospitales, clínicas y profesionales de la salud.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 items-start">
+                            <div class="text-2xl text-green-600">🚗</div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">Acceso y Movilidad</h4>
+                                <p class="text-gray-600">Vialidades principales con fácil acceso desde toda la ciudad.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gradient-to-br from-blue-900 to-blue-800 h-96 rounded-xl flex items-center justify-center text-white text-center p-8">
+                    <div>
+                        <div class="text-5xl mb-4">🗺️</div>
+                        <p class="text-lg">Mapa interactivo de ubicación disponible en versión de producción</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-blue-900 text-white py-16 px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid md:grid-cols-3 gap-12 mb-12">
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center">
+                            <span class="font-bold text-lg">NM</span>
+                        </div>
+                        <span class="text-xl font-bold">Nexus Medicus</span>
+                    </div>
+                    <p class="text-blue-100">Consultorios médicos premium e inversiones inmobiliarias de salud en Valle Real.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg mb-4">Contacto</h4>
+                    <p class="text-blue-100 mb-2">Avenida Central Guillermo Gonzalez Camarena #500</p>
+                    <p class="text-blue-100 mb-2">Valle Real, 45136 Zapopan, Jalisco</p>
+                    <p class="text-blue-100">📞 Agendar Cita</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-lg mb-4">Documentos</h4>
+                    <ul class="space-y-2 text-blue-100">
+                        <li><a href="#" class="hover:text-white transition">Términos y Condiciones</a></li>
+                        <li><a href="#" class="hover:text-white transition">Aviso de Privacidad</a></li>
+                        <li><a href="#" class="hover:text-white transition">Política de Cookies</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-blue-800 pt-8 text-center text-blue-100">
+                <p>&copy; 2026 Nexus Medicus. Todos los derechos reservados. | Consultorios Médicos Premium en Zapopan</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL - AGENDAR CITA -->
+    <div id="modalCita" class="modal-overlay" onclick="closeModal(event)">
+        <div class="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full mx-4" onclick="event.stopPropagation()">
+            <h3 class="text-2xl font-bold text-blue-900 mb-6">Agendar Cita Presencial</h3>
+            <form onsubmit="handleSubmitCita(event)">
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-medium mb-2">Nombre Completo</label>
+                    <input type="text" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-900 text-base" placeholder="Dr. Juan Pérez">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-medium mb-2">Teléfono / WhatsApp</label>
+                    <input type="tel" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-900 text-base" placeholder="+52 333 000 0000">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-medium mb-2">Correo Electrónico</label>
+                    <input type="email" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-900 text-base" placeholder="nombre@correo.com">
+                </div>
+                <div class="mb-6">
+                    <label class="block text-gray-700 font-medium mb-2">¿Eres Doctor o Inversionista?</label>
+                    <select required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-900 text-base">
+                        <option value="">Selecciona tu perfil</option>
+                        <option value="doctor">Médico Especialista</option>
+                        <option value="inversor">Inversionista</option>
+                        <option value="ambos">Ambos</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary w-full mb-3">Confirmar Cita</button>
+                <button type="button" onclick="closeModal()" class="btn-secondary w-full">Cancelar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL - DESCARGA -->
+    <div id="modalDownload" class="modal-overlay" onclick="closeDownloadModal(event)">
+        <div class="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full mx-4" onclick="event.stopPropagation()">
+            <h3 class="text-2xl font-bold text-blue-900 mb-6">Descargar Documentos</h3>
+            <form onsubmit="handleSubmitDownload(event)">
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-medium mb-2">Nombre Completo</label>
+                    <input type="text" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-900 text-base" placeholder="Dr. Juan Pérez">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-medium mb-2">Teléfono / WhatsApp</label>
+                    <input type="tel" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-900 text-base" placeholder="+52 333 000 0000">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-medium mb-2">Correo Electrónico</label>
+                    <input type="email" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-900 text-base" placeholder="nombre@correo.com">
+                </div>
+                <div class="mb-6">
+                    <label class="block text-gray-700 font-medium mb-2">Perfil</label>
+                    <select required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-900 text-base">
+                        <option value="">Selecciona tu perfil</option>
+                        <option value="doctor">Médico Especialista</option>
+                        <option value="inversor">Inversionista</option>
+                        <option value="ambos">Ambos</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary w-full mb-3">Descargar Ahora</button>
+                <button type="button" onclick="closeDownloadModal()" class="btn-secondary w-full">Cancelar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL - COTIZACIÓN -->
+    <div id="modalQuote" class="modal-overlay" onclick="closeQuoteModal(event)">
+        <div class="bg-white rounded-xl shadow-2xl p-8 max-w-md w-full mx-4" onclick="event.stopPropagation()">
+            <h3 class="text-2xl font-bold text-blue-900 mb-6">Solicitar Cotización</h3>
+            <form onsubmit="handleSubmitQuote(event)">
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-medium mb-2">Nombre Completo</label>
+                    <input type="text" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-900 text-base" placeholder="Dr. Juan Pérez">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-medium mb-2">Teléfono / WhatsApp</label>
+                    <input type="tel" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-900 text-base" placeholder="+52 333 000 0000">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-gray-700 font-medium mb-2">Correo Electrónico</label>
+                    <input type="email" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-900 text-base" placeholder="nombre@correo.com">
+                </div>
+                <div class="mb-6">
+                    <label class="block text-gray-700 font-medium mb-2">Perfil</label>
+                    <select required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-900 text-base">
+                        <option value="">Selecciona tu perfil</option>
+                        <option value="doctor">Médico Especialista</option>
+                        <option value="inversor">Inversionista</option>
+                        <option value="ambos">Ambos</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary w-full mb-3">Enviar Solicitud</button>
+                <button type="button" onclick="closeQuoteModal()" class="btn-secondary w-full">Cancelar</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openModal() {
+            document.getElementById('modalCita').classList.add('active');
+        }
+
+        function closeModal(event) {
+            if (event && event.target.id !== 'modalCita') return;
+            document.getElementById('modalCita').classList.remove('active');
+        }
+
+        function openDownloadModal() {
+            document.getElementById('modalDownload').classList.add('active');
+        }
+
+        function closeDownloadModal(event) {
+            if (event && event.target.id !== 'modalDownload') return;
+            document.getElementById('modalDownload').classList.remove('active');
+        }
+
+        function openQuoteModal() {
+            document.getElementById('modalQuote').classList.add('active');
+        }
+
+        function closeQuoteModal(event) {
+            if (event && event.target.id !== 'modalQuote') return;
+            document.getElementById('modalQuote').classList.remove('active');
+        }
+
+        function scrollToModelos() {
+            document.getElementById('modelos').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function handleSubmitCita(event) {
+            event.preventDefault();
+            alert('¡Gracias! Tu solicitud de cita presencial ha sido recibida. Nos pondremos en contacto pronto.');
+            closeModal();
+            event.target.reset();
+        }
+
+        function handleSubmitDownload(event) {
+            event.preventDefault();
+            alert('¡Gracias! Los documentos se están preparando y se enviarán a tu correo en breve.');
+            closeDownloadModal();
+            event.target.reset();
+        }
+
+        function handleSubmitQuote(event) {
+            event.preventDefault();
+            alert('¡Gracias! Tu solicitud de cotización ha sido registrada. Te contactaremos dentro de 24 horas.');
+            closeQuoteModal();
+            event.target.reset();
+        }
+
+        // Cerrar modales con tecla ESC
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                document.getElementById('modalCita').classList.remove('active');
+                document.getElementById('modalDownload').classList.remove('active');
+                document.getElementById('modalQuote').classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

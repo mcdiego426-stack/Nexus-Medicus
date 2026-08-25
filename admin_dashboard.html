@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Medicus - Dashboard CRM Administrativo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0b1120;
+            color: #f8fafc;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Outfit', sans-serif;
+        }
+        .glass-card {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .kpi-card {
+            background: linear-gradient(135deg, rgba(20, 184, 166, 0.1) 0%, rgba(15, 23, 42, 0.8) 100%);
+            border: 1px solid rgba(20, 184, 166, 0.3);
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .status-new { background: #dbeafe; color: #1e40af; }
+        .status-contacted { background: #e0e7ff; color: #3730a3; }
+        .status-cita { background: #fef08a; color: #92400e; }
+        .status-cotizacion { background: #dbeafe; color: #0369a1; }
+        .status-cerrado { background: #dcfce7; color: #166534; }
+        .status-perdido { background: #fee2e2; color: #7f1d1d; }
+        .inventory-toggle {
+            position: relative;
+            width: 60px;
+            height: 32px;
+            background: #475569;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid #64748b;
+        }
+        .inventory-toggle.disponible {
+            background: #10b981;
+            border-color: #059669;
+        }
+        .inventory-toggle.reservado {
+            background: #f59e0b;
+            border-color: #d97706;
+        }
+        .inventory-toggle.vendido {
+            background: #ef4444;
+            border-color: #dc2626;
+        }
+        .toggle-dot {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 28px;
+            height: 28px;
+            background: white;
+            border-radius: 14px;
+            transition: all 0.3s;
+        }
+        .inventory-toggle.reservado .toggle-dot {
+            left: 14px;
+        }
+        .inventory-toggle.vendido .toggle-dot {
+            left: 26px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            background: rgba(15, 23, 42, 0.9);
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid rgba(20, 184, 166, 0.3);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        tr:hover {
+            background: rgba(20, 184, 166, 0.05);
+        }
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(11, 17, 32, 0.8);
+            backdrop-filter: blur(12px);
+            z-index: 50;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- NAVBAR -->
+    <header class="sticky top-0 z-40 glass-card border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-teal-600 to-sky-500 flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <div>
+                    <span class="font-bold text-xl tracking-tight text-white">NEXUS <span class="text-teal-500">CRM</span></span>
+                    <span class="block text-[10px] text-slate-400 tracking-wider font-semibold uppercase">Dashboard Administrativo</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-6">
+                <span class="text-sm text-slate-400">Modo Oscuro</span>
+                <button onclick="logout()" class="bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white px-4 py-2 rounded-lg border border-slate-700 transition-all text-sm font-medium">
+                    <i class="fa-solid fa-sign-out-alt mr-2"></i> Cerrar Sesión
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+        <!-- SECCIÓN 1: KPI CARDS (MÉTRICAS CLAVE) -->
+        <section class="space-y-4">
+            <h2 class="text-2xl font-bold text-white">Resumen de Operaciones</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+                <!-- KPI: TOTAL DE LEADS -->
+                <div class="kpi-card rounded-2xl p-6 border-l-4 border-teal-500">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-semibold text-teal-400 uppercase tracking-wider">Total de Leads</span>
+                        <i class="fa-solid fa-users text-teal-500 text-xl"></i>
+                    </div>
+                    <div class="text-3xl font-bold text-white mb-1" id="kpi-total-leads">0</div>
+                    <p class="text-xs text-slate-400">Prospectos capturados en total</p>
+                </div>
+
+                <!-- KPI: VALOR POTENCIAL -->
+                <div class="kpi-card rounded-2xl p-6 border-l-4 border-yellow-500">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-semibold text-yellow-400 uppercase tracking-wider">Valor Potencial</span>
+                        <i class="fa-solid fa-money-bill-trend-up text-yellow-500 text-xl"></i>
+                    </div>
+                    <div class="text-3xl font-bold text-white mb-1" id="kpi-valor-potencial">$0</div>
+                    <p class="text-xs text-slate-400">Suma de inversiones consultadas</p>
+                </div>
+
+                <!-- KPI: INVENTARIO -->
+                <div class="kpi-card rounded-2xl p-6 border-l-4 border-emerald-500">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-semibold text-emerald-400 uppercase tracking-wider">Inventario</span>
+                        <i class="fa-solid fa-boxes-stacked text-emerald-500 text-xl"></i>
+                    </div>
+                    <div class="text-3xl font-bold text-white mb-1"><span id="kpi-disponibles">8</span>/8</div>
+                    <p class="text-xs text-slate-400">Unidades disponibles</p>
+                </div>
+
+                <!-- KPI: TASA CONVERSIÓN -->
+                <div class="kpi-card rounded-2xl p-6 border-l-4 border-purple-500">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-semibold text-purple-400 uppercase tracking-wider">Conversión</span>
+                        <i class="fa-solid fa-chart-pie text-purple-500 text-xl"></i>
+                    </div>
+                    <div class="text-3xl font-bold text-white mb-1" id="kpi-conversion">0%</div>
+                    <p class="text-xs text-slate-400">Citas agendadas / Total leads</p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECCIÓN 2: GESTOR DE LEADS (PIPELINE) -->
+        <section class="space-y-4">
+            <div class="flex items-center justify-between">
+                <h2 class="text-2xl font-bold text-white">Pipeline de Ventas</h2>
+                <button onclick="exportToCSV()" class="bg-gradient-to-r from-teal-600 to-cyan-500 hover:from-teal-500 hover:to-cyan-400 text-white font-semibold px-6 py-2.5 rounded-lg transition-all text-sm shadow-lg">
+                    <i class="fa-solid fa-download mr-2"></i> Exportar a CSV
+                </button>
+            </div>
+
+            <!-- FILTROS -->
+            <div class="glass-card rounded-xl p-4 border border-slate-800 flex gap-3 flex-wrap">
+                <input type="text" id="search-lead" placeholder="Buscar por nombre o email..." class="flex-1 min-w-[200px] bg-slate-900 border border-slate-700 text-white rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-teal-500" oninput="filterLeads()">
+                <select id="filter-status" class="bg-slate-900 border border-slate-700 text-white rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-teal-500" onchange="filterLeads()">
+                    <option value="">Todos los Estados</option>
+                    <option value="Nuevo Lead">Nuevo Lead</option>
+                    <option value="Contactado">Contactado</option>
+                    <option value="Cita Agendada">Cita Agendada</option>
+                    <option value="Cotización Enviada">Cotización Enviada</option>
+                    <option value="Ganado">Ganado</option>
+                    <option value="Perdido">Perdido</option>
+                </select>
+                <select id="filter-perfil" class="bg-slate-900 border border-slate-700 text-white rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-teal-500" onchange="filterLeads()">
+                    <option value="">Todos los Perfiles</option>
+                    <option value="Doctor">Médico / Doctor</option>
+                    <option value="Inversionista">Inversionista</option>
+                    <option value="Ambos">Ambos</option>
+                </select>
+            </div>
+
+            <!-- TABLA DE LEADS -->
+            <div class="glass-card rounded-xl border border-slate-800 overflow-x-auto">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Teléfono</th>
+                            <th>Email</th>
+                            <th>Perfil</th>
+                            <th>Modelo</th>
+                            <th>Recursos</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leads-table-body">
+                        <!-- Se llena dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 3: CONTROL DE INVENTARIO -->
+        <section class="space-y-4">
+            <h2 class="text-2xl font-bold text-white">Control de Inventario en Tiempo Real</h2>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- MODELO: TEN -->
+                <div class="glass-card rounded-2xl p-6 border border-slate-800 space-y-4">
+                    <div>
+                        <h3 class="font-bold text-lg text-white">Ten</h3>
+                        <p class="text-sm text-slate-400">18 m² • $2,205,000</p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-slate-300">Estado:</span>
+                        <div class="inventory-toggle disponible" data-model="Ten" onclick="toggleInventory(event, 'Ten')">
+                            <div class="toggle-dot"></div>
+                        </div>
+                    </div>
+                    <div id="state-label-Ten" class="text-xs font-semibold text-emerald-400">✓ Disponible</div>
+                </div>
+
+                <!-- MODELO: TWENTY -->
+                <div class="glass-card rounded-2xl p-6 border border-slate-800 space-y-4">
+                    <div>
+                        <h3 class="font-bold text-lg text-white">Twenty</h3>
+                        <p class="text-sm text-slate-400">22 m² • $3,279,000</p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-slate-300">Estado:</span>
+                        <div class="inventory-toggle disponible" data-model="Twenty" onclick="toggleInventory(event, 'Twenty')">
+                            <div class="toggle-dot"></div>
+                        </div>
+                    </div>
+                    <div id="state-label-Twenty" class="text-xs font-semibold text-emerald-400">✓ Disponible</div>
+                </div>
+
+                <!-- MODELO: THIRTY -->
+                <div class="glass-card rounded-2xl p-6 border border-slate-800 space-y-4">
+                    <div>
+                        <h3 class="font-bold text-lg text-white">Thirty</h3>
+                        <p class="text-sm text-slate-400">33 m² • $4,368,000</p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-slate-300">Estado:</span>
+                        <div class="inventory-toggle disponible" data-model="Thirty" onclick="toggleInventory(event, 'Thirty')">
+                            <div class="toggle-dot"></div>
+                        </div>
+                    </div>
+                    <div id="state-label-Thirty" class="text-xs font-semibold text-emerald-400">✓ Disponible</div>
+                </div>
+
+                <!-- MODELO: FORTY -->
+                <div class="glass-card rounded-2xl p-6 border border-slate-800 space-y-4">
+                    <div>
+                        <h3 class="font-bold text-lg text-white">Forty</h3>
+                        <p class="text-sm text-slate-400">46 m² • $5,783,000</p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-slate-300">Estado:</span>
+                        <div class="inventory-toggle disponible" data-model="Forty" onclick="toggleInventory(event, 'Forty')">
+                            <div class="toggle-dot"></div>
+                        </div>
+                    </div>
+                    <div id="state-label-Forty" class="text-xs font-semibold text-emerald-400">✓ Disponible</div>
+                </div>
+
+                <!-- MODELO: FIFTY -->
+                <div class="glass-card rounded-2xl p-6 border border-slate-800 space-y-4">
+                    <div>
+                        <h3 class="font-bold text-lg text-white">Fifty</h3>
+                        <p class="text-sm text-slate-400">53 m² • $6,415,000</p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-slate-300">Estado:</span>
+                        <div class="inventory-toggle disponible" data-model="Fifty" onclick="toggleInventory(event, 'Fifty')">
+                            <div class="toggle-dot"></div>
+                        </div>
+                    </div>
+                    <div id="state-label-Fifty" class="text-xs font-semibold text-emerald-400">✓ Disponible</div>
+                </div>
+
+                <!-- MODELO: NINETY -->
+                <div class="glass-card rounded-2xl p-6 border border-slate-800 space-y-4">
+                    <div>
+                        <h3 class="font-bold text-lg text-white">Ninety</h3>
+                        <p class="text-sm text-slate-400">95 m² • $11,536,000</p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-slate-300">Estado:</span>
+                        <div class="inventory-toggle disponible" data-model="Ninety" onclick="toggleInventory(event, 'Ninety')">
+                            <div class="toggle-dot"></div>
+                        </div>
+                    </div>
+                    <div id="state-label-Ninety" class="text-xs font-semibold text-emerald-400">✓ Disponible</div>
+                </div>
+
+                <!-- MODELO: ONE HUNDRED -->
+                <div class="glass-card rounded-2xl p-6 border border-slate-800 space-y-4">
+                    <div>
+                        <h3 class="font-bold text-lg text-white">One Hundred</h3>
+                        <p class="text-sm text-slate-400">111 m² • $13,539,000</p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-slate-300">Estado:</span>
+                        <div class="inventory-toggle disponible" data-model="One Hundred" onclick="toggleInventory(event, 'One Hundred')">
+                            <div class="toggle-dot"></div>
+                        </div>
+                    </div>
+                    <div id="state-label-One Hundred" class="text-xs font-semibold text-emerald-400">✓ Disponible</div>
+                </div>
+
+                <!-- MODELO: TWO HUNDRED -->
+                <div class="glass-card rounded-2xl p-6 border border-slate-800 space-y-4">
+                    <div>
+                        <h3 class="font-bold text-lg text-white">Two Hundred</h3>
+                        <p class="text-sm text-slate-400">223 m² • $25,742,000</p>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium text-slate-300">Estado:</span>
+                        <div class="inventory-toggle disponible" data-model="Two Hundred" onclick="toggleInventory(event, 'Two Hundred')">
+                            <div class="toggle-dot"></div>
+                        </div>
+                    </div>
+                    <div id="state-label-Two Hundred" class="text-xs font-semibold text-emerald-400">✓ Disponible</div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL DE EDICIÓN DE ESTADO -->
+    <div id="edit-status-modal" class="modal-overlay">
+        <div class="glass-card max-w-md w-full rounded-2xl p-8 border border-slate-700">
+            <h3 class="text-xl font-bold text-white mb-6">Cambiar Estado del Lead</h3>
+            <p id="modal-lead-name" class="text-sm text-slate-400 mb-6">Cliente: <span class="font-semibold text-teal-400"></span></p>
+
+            <select id="status-select" class="w-full bg-slate-900 border border-slate-700 text-white rounded-lg px-4 py-3 mb-6 text-base focus:outline-none focus:border-teal-500">
+                <option value="Nuevo Lead">Nuevo Lead</option>
+                <option value="Contactado">Contactado</option>
+                <option value="Cita Agendada">Cita Agendada</option>
+                <option value="Cotización Enviada">Cotización Enviada</option>
+                <option value="Ganado">Ganado</option>
+                <option value="Perdido">Perdido</option>
+            </select>
+
+            <div class="flex gap-3">
+                <button onclick="saveStatus()" class="flex-1 bg-gradient-to-r from-teal-600 to-cyan-500 hover:from-teal-500 hover:to-cyan-400 text-white font-bold py-3 rounded-lg transition-all">
+                    Guardar
+                </button>
+                <button onclick="closeStatusModal()" class="flex-1 bg-slate-900 hover:bg-slate-800 text-slate-300 font-bold py-3 rounded-lg border border-slate-700 transition-all">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT -->
+    <script>
+        // DATOS DE PRUEBA
+        const mockLeads = [
+            { id: 1, nombre: "Dr. Carlos Mendoza", telefono: "33 1234 5678", email: "carlos.mendoza@example.com", perfil: "Doctor", modelo: "Thirty", recursos: "Brochure, PDF", estado: "Nuevo Lead" },
+            { id: 2, nombre: "Ing. Roberto Silva", telefono: "33 2345 6789", email: "roberto.silva@example.com", perfil: "Inversionista", modelo: "Fifty", recursos: "Brochure", estado: "Contactado" },
+            { id: 3, nombre: "Dra. Alejandra López", telefono: "33 3456 7890", email: "ale.lopez@example.com", perfil: "Doctor", modelo: "Twenty", recursos: "PDF", estado: "Cita Agendada" },
+            { id: 4, nombre: "Lic. Fernando González", telefono: "33 4567 8901", email: "fernando.g@example.com", perfil: "Inversionista", modelo: "Forty", recursos: "Brochure, PDF", estado: "Cotización Enviada" },
+            { id: 5, nombre: "Dr. Miguel Rodríguez", telefono: "33 5678 9012", email: "miguel.r@example.com", perfil: "Doctor", modelo: "Ten", recursos: "-", estado: "Ganado" },
+        ];
+
+        const modelPrices = {
+            "Ten": 2205000, "Twenty": 3279000, "Thirty": 4368000, "Forty": 5783000,
+            "Fifty": 6415000, "Ninety": 11536000, "One Hundred": 13539000, "Two Hundred": 25742000
+        };
+
+        let leads = JSON.parse(localStorage.getItem('nexus_leads')) || mockLeads;
+        let inventory = JSON.parse(localStorage.getItem('nexus_inventory')) || {
+            "Ten": "disponible", "Twenty": "disponible", "Thirty": "disponible", "Forty": "disponible",
+            "Fifty": "disponible", "Ninety": "disponible", "One Hundred": "disponible", "Two Hundred": "disponible"
+        };
+        let currentEditingLeadId = null;
+
+        function saveLeads() {
+            localStorage.setItem('nexus_leads', JSON.stringify(leads));
+        }
+
+        function saveInventory() {
+            localStorage.setItem('nexus_inventory', JSON.stringify(inventory));
+        }
+
+        function renderLeads(leadsToRender = leads) {
+            const tbody = document.getElementById('leads-table-body');
+            tbody.innerHTML = leadsToRender.map(lead => `
+                <tr>
+                    <td class="font-medium text-white">${lead.nombre}</td>
+                    <td>
+                        <a href="https://wa.me/52${lead.telefono.replace(/\\s/g, '')}" target="_blank" class="text-teal-400 hover:text-teal-300 font-medium flex items-center gap-2">
+                            <i class="fa-brands fa-whatsapp"></i> ${lead.telefono}
+                        </a>
+                    </td>
+                    <td class="text-slate-400">${lead.email}</td>
+                    <td><span class="text-sm font-medium text-teal-400">${lead.perfil}</span></td>
+                    <td class="font-medium text-white">${lead.modelo}</td>
+                    <td class="text-xs text-slate-400">${lead.recursos}</td>
+                    <td onclick="openStatusModal(${lead.id}, '${lead.nombre}', '${lead.estado}')" class="cursor-pointer">
+                        <span class="status-badge status-${getStatusClass(lead.estado)}">${lead.estado}</span>
+                    </td>
+                    <td>
+                        <button onclick="deleteLead(${lead.id})" class="text-red-500 hover:text-red-400 transition-colors text-sm font-medium">
+                            <i class="fa-solid fa-trash mr-1"></i> Eliminar
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function getStatusClass(status) {
+            const statusMap = {
+                "Nuevo Lead": "new",
+                "Contactado": "contacted",
+                "Cita Agendada": "cita",
+                "Cotización Enviada": "cotizacion",
+                "Ganado": "cerrado",
+                "Perdido": "perdido"
+            };
+            return statusMap[status] || "new";
+        }
+
+        function updateKPIs() {
+            const totalLeads = leads.length;
+            const valorPotencial = leads.reduce((sum, lead) => sum + (modelPrices[lead.modelo] || 0), 0);
+            const citasAgendadas = leads.filter(l => l.estado === "Cita Agendada" || l.estado === "Ganado").length;
+            const tasaConversion = totalLeads > 0 ? Math.round((citasAgendadas / totalLeads) * 100) : 0;
+            const disponibles = Object.values(inventory).filter(v => v === "disponible").length;
+
+            document.getElementById('kpi-total-leads').textContent = totalLeads;
+            document.getElementById('kpi-valor-potencial').textContent = `$${valorPotencial.toLocaleString()}`;
+            document.getElementById('kpi-conversion').textContent = `${tasaConversion}%`;
+            document.getElementById('kpi-disponibles').textContent = disponibles;
+        }
+
+        function filterLeads() {
+            const searchTerm = document.getElementById('search-lead').value.toLowerCase();
+            const filterStatus = document.getElementById('filter-status').value;
+            const filterPerfil = document.getElementById('filter-perfil').value;
+
+            const filtered = leads.filter(lead => {
+                const matchSearch = lead.nombre.toLowerCase().includes(searchTerm) || lead.email.toLowerCase().includes(searchTerm);
+                const matchStatus = filterStatus === '' || lead.estado === filterStatus;
+                const matchPerfil = filterPerfil === '' || lead.perfil === filterPerfil;
+                return matchSearch && matchStatus && matchPerfil;
+            });
+
+            renderLeads(filtered);
+        }
+
+        function openStatusModal(leadId, leadName, currentStatus) {
+            currentEditingLeadId = leadId;
+            document.getElementById('modal-lead-name').innerHTML = `Cliente: <span class="font-semibold text-teal-400">${leadName}</span>`;
+            document.getElementById('status-select').value = currentStatus;
+            document.getElementById('edit-status-modal').classList.add('active');
+        }
+
+        function closeStatusModal() {
+            document.getElementById('edit-status-modal').classList.remove('active');
+        }
+
+        function saveStatus() {
+            const newStatus = document.getElementById('status-select').value;
+            const lead = leads.find(l => l.id === currentEditingLeadId);
+            if (lead) {
+                lead.estado = newStatus;
+                saveLeads();
+                renderLeads();
+                updateKPIs();
+            }
+            closeStatusModal();
+        }
+
+        function deleteLead(leadId) {
+            if (confirm('¿Estás seguro de que deseas eliminar este lead?')) {
+                leads = leads.filter(l => l.id !== leadId);
+                saveLeads();
+                renderLeads();
+                updateKPIs();
+            }
+        }
+
+        function toggleInventory(event, modelName) {
+            event.preventDefault();
+            const toggle = event.currentTarget;
+            const states = ['disponible', 'reservado', 'vendido'];
+            const currentState = inventory[modelName];
+            const currentIndex = states.indexOf(currentState);
+            const nextState = states[(currentIndex + 1) % states.length];
+
+            inventory[modelName] = nextState;
+            saveInventory();
+
+            toggle.classList.remove('disponible', 'reservado', 'vendido');
+            toggle.classList.add(nextState);
+
+            const labels = {
+                'disponible': '✓ Disponible',
+                'reservado': '⏱ Reservado',
+                'vendido': '✗ Vendido'
+            };
+            const colors = {
+                'disponible': 'text-emerald-400',
+                'reservado': 'text-yellow-400',
+                'vendido': 'text-red-400'
+            };
+
+            const label = document.getElementById(`state-label-${modelName}`);
+            label.textContent = labels[nextState];
+            label.className = `text-xs font-semibold ${colors[nextState]}`;
+        }
+
+        function exportToCSV() {
+            let csv = 'Nombre,Teléfono,Email,Perfil,Modelo,Recursos,Estado,Fecha Agregado\\n';
+            leads.forEach(lead => {
+                csv += `"${lead.nombre}","${lead.telefono}","${lead.email}","${lead.perfil}","${lead.modelo}","${lead.recursos}","${lead.estado}","${new Date().toLocaleDateString()}"\\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `Nexus_Medicus_Leads_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+        }
+
+        function logout() {
+            if (confirm('¿Deseas cerrar sesión?')) {
+                window.location.href = 'index.html';
+            }
+        }
+
+        // INICIALIZAR
+        window.onload = function() {
+            renderLeads();
+            updateKPIs();
+        };
+    </script>
+
+</body>
+</html>

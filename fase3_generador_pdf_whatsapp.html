@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Medicus - Fase 3: Generador de PDF & WhatsApp Flotante</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0b1120;
+            color: #f8fafc;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Outfit', sans-serif;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #2dd4bf 0%, #38bdf8 50%, #818cf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .glass-card {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .whatsapp-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 40;
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .whatsapp-float:hover {
+            animation: none;
+            transform: scale(1.1);
+        }
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background-color: rgba(11, 17, 32, 0.8);
+            backdrop-filter: blur(12px);
+            z-index: 50;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .resource-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .resource-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(20, 184, 166, 0.2);
+        }
+        .pdf-template {
+            display: none;
+            width: 210mm;
+            height: 297mm;
+            padding: 20mm;
+            background: white;
+            color: #000;
+            font-family: Arial, sans-serif;
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-16">
+
+    <!-- NAVBAR -->
+    <header class="sticky top-0 z-50 glass-card border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-teal-600 to-sky-500 flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                    <i class="fa-solid fa-hospital-user"></i>
+                </div>
+                <div>
+                    <span class="font-bold text-xl tracking-tight text-white">NEXUS <span class="text-teal-500">MEDICUS</span></span>
+                    <span class="block text-[10px] text-slate-400 tracking-wider font-semibold uppercase">Fase 3 • PDF + WhatsApp</span>
+                </div>
+            </div>
+            <nav class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-300">
+                <a href="#modelos" class="hover:text-teal-500 transition-colors">Modelos</a>
+                <a href="#recursos" class="hover:text-teal-500 transition-colors">Recursos</a>
+                <a href="#ubicacion" class="hover:text-teal-500 transition-colors">Ubicación</a>
+            </nav>
+            <button onclick="scrollToRecursos()" class="bg-gradient-to-r from-teal-600 to-cyan-500 hover:from-teal-500 hover:to-cyan-400 text-white font-semibold px-5 py-2.5 rounded-xl shadow-lg text-sm transition-all">
+                <i class="fa-solid fa-download mr-2"></i> Descargar Recursos
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 space-y-16">
+
+        <!-- SECCIÓN 1: CATÁLOGO DE MODELOS CON SELECTOR -->
+        <section id="modelos" class="space-y-8">
+            <div class="text-center space-y-3">
+                <span class="text-xs font-semibold text-teal-500 uppercase tracking-widest">Genera tu Cotización Personalizada</span>
+                <h1 class="text-4xl md:text-5xl font-bold text-white">
+                    Consultorios Médicos en <span class="gradient-text">Valle Real</span>
+                </h1>
+                <p class="text-slate-400 text-lg max-w-2xl mx-auto">
+                    Selecciona tu modelo, genera la cotización en PDF y comparte por WhatsApp en segundos.
+                </p>
+            </div>
+
+            <!-- MODELO SELECTOR CAROUSEL / GRID -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- TEN -->
+                <div class="model-card glass-card rounded-2xl p-5 border border-slate-800 cursor-pointer transition-all hover:border-teal-500 hover:shadow-lg hover:shadow-teal-500/20" onclick="selectModel('Ten', 18, 2205000, 16128, 193536, 8.78, 11.39)">
+                    <div class="bg-gradient-to-r from-teal-600 to-cyan-500 p-4 rounded-xl text-white mb-4">
+                        <h3 class="text-2xl font-bold">Ten</h3>
+                        <p class="text-sm text-cyan-100">18 m²</p>
+                    </div>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Precio:</span>
+                            <span class="font-bold text-white">$2,205,000</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">NOI/mes:</span>
+                            <span class="font-bold text-teal-400">$16,128</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">ROI:</span>
+                            <span class="font-bold text-yellow-400">11.39%</span>
+                        </div>
+                    </div>
+                    <button onclick="openLeadModal(event, 'Ten', 18)" class="w-full mt-4 bg-teal-600 hover:bg-teal-500 text-white font-semibold py-3 rounded-lg transition-all text-sm">
+                        Cotizar Ahora
+                    </button>
+                </div>
+
+                <!-- TWENTY -->
+                <div class="model-card glass-card rounded-2xl p-5 border border-slate-800 cursor-pointer transition-all hover:border-teal-500 hover:shadow-lg hover:shadow-teal-500/20" onclick="selectModel('Twenty', 22, 3279000, 19712, 236544, 7.21, 13.86)">
+                    <div class="bg-gradient-to-r from-teal-600 to-cyan-500 p-4 rounded-xl text-white mb-4">
+                        <h3 class="text-2xl font-bold">Twenty</h3>
+                        <p class="text-sm text-cyan-100">22 m²</p>
+                    </div>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Precio:</span>
+                            <span class="font-bold text-white">$3,279,000</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">NOI/mes:</span>
+                            <span class="font-bold text-teal-400">$19,712</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">ROI:</span>
+                            <span class="font-bold text-yellow-400">13.86%</span>
+                        </div>
+                    </div>
+                    <button onclick="openLeadModal(event, 'Twenty', 22)" class="w-full mt-4 bg-teal-600 hover:bg-teal-500 text-white font-semibold py-3 rounded-lg transition-all text-sm">
+                        Cotizar Ahora
+                    </button>
+                </div>
+
+                <!-- THIRTY -->
+                <div class="model-card glass-card rounded-2xl p-5 border border-slate-800 cursor-pointer transition-all hover:border-teal-500 hover:shadow-lg hover:shadow-teal-500/20" onclick="selectModel('Thirty', 33, 4368000, 27443, 329316, 7.54, 13.26)">
+                    <div class="bg-gradient-to-r from-teal-600 to-cyan-500 p-4 rounded-xl text-white mb-4">
+                        <h3 class="text-2xl font-bold">Thirty</h3>
+                        <p class="text-sm text-cyan-100">33 m²</p>
+                    </div>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Precio:</span>
+                            <span class="font-bold text-white">$4,368,000</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">NOI/mes:</span>
+                            <span class="font-bold text-teal-400">$27,443</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">ROI:</span>
+                            <span class="font-bold text-yellow-400">13.26%</span>
+                        </div>
+                    </div>
+                    <button onclick="openLeadModal(event, 'Thirty', 33)" class="w-full mt-4 bg-teal-600 hover:bg-teal-500 text-white font-semibold py-3 rounded-lg transition-all text-sm">
+                        Cotizar Ahora
+                    </button>
+                </div>
+
+                <!-- FORTY -->
+                <div class="model-card glass-card rounded-2xl p-5 border border-slate-800 cursor-pointer transition-all hover:border-teal-500 hover:shadow-lg hover:shadow-teal-500/20" onclick="selectModel('Forty', 46, 5783000, 34868, 418416, 7.24, 13.82)">
+                    <div class="bg-gradient-to-r from-teal-600 to-cyan-500 p-4 rounded-xl text-white mb-4">
+                        <h3 class="text-2xl font-bold">Forty</h3>
+                        <p class="text-sm text-cyan-100">46 m²</p>
+                    </div>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Precio:</span>
+                            <span class="font-bold text-white">$5,783,000</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">NOI/mes:</span>
+                            <span class="font-bold text-teal-400">$34,868</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">ROI:</span>
+                            <span class="font-bold text-yellow-400">13.82%</span>
+                        </div>
+                    </div>
+                    <button onclick="openLeadModal(event, 'Forty', 46)" class="w-full mt-4 bg-teal-600 hover:bg-teal-500 text-white font-semibold py-3 rounded-lg transition-all text-sm">
+                        Cotizar Ahora
+                    </button>
+                </div>
+            </div>
+
+            <!-- MOSTRAR MÁS MODELOS -->
+            <div class="text-center">
+                <button onclick="toggleMoreModels()" class="bg-slate-900 hover:bg-slate-800 text-white font-semibold px-8 py-3 rounded-xl border border-slate-700 transition-all">
+                    <i class="fa-solid fa-chevron-down mr-2" id="chevron-icon"></i> Ver 4 Modelos Más (Fifty, Ninety, One Hundred, Two Hundred)
+                </button>
+            </div>
+
+            <!-- MODELOS OCULTOS (Fifty, Ninety, One Hundred, Two Hundred) -->
+            <div id="more-models" class="hidden grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- FIFTY -->
+                <div class="model-card glass-card rounded-2xl p-5 border border-slate-800 cursor-pointer transition-all hover:border-teal-500" onclick="selectModel('Fifty', 53, 6415000, 37736, 452832, 7.06, 14.17)">
+                    <div class="bg-gradient-to-r from-teal-600 to-cyan-500 p-4 rounded-xl text-white mb-4">
+                        <h3 class="text-2xl font-bold">Fifty</h3>
+                        <p class="text-sm text-cyan-100">53 m²</p>
+                    </div>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Precio:</span>
+                            <span class="font-bold text-white">$6,415,000</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">NOI/mes:</span>
+                            <span class="font-bold text-teal-400">$37,736</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">ROI:</span>
+                            <span class="font-bold text-yellow-400">14.17%</span>
+                        </div>
+                    </div>
+                    <button onclick="openLeadModal(event, 'Fifty', 53)" class="w-full mt-4 bg-teal-600 hover:bg-teal-500 text-white font-semibold py-3 rounded-lg transition-all text-sm">
+                        Cotizar Ahora
+                    </button>
+                </div>
+
+                <!-- NINETY -->
+                <div class="model-card glass-card rounded-2xl p-5 border border-slate-800 cursor-pointer transition-all hover:border-teal-500" onclick="selectModel('Ninety', 95, 11536000, 67640, 811680, 7.04, 14.21)">
+                    <div class="bg-gradient-to-r from-teal-600 to-cyan-500 p-4 rounded-xl text-white mb-4">
+                        <h3 class="text-2xl font-bold">Ninety</h3>
+                        <p class="text-sm text-cyan-100">95 m²</p>
+                    </div>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Precio:</span>
+                            <span class="font-bold text-white">$11,536,000</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">NOI/mes:</span>
+                            <span class="font-bold text-teal-400">$67,640</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">ROI:</span>
+                            <span class="font-bold text-yellow-400">14.21%</span>
+                        </div>
+                    </div>
+                    <button onclick="openLeadModal(event, 'Ninety', 95)" class="w-full mt-4 bg-teal-600 hover:bg-teal-500 text-white font-semibold py-3 rounded-lg transition-all text-sm">
+                        Cotizar Ahora
+                    </button>
+                </div>
+
+                <!-- ONE HUNDRED -->
+                <div class="model-card glass-card rounded-2xl p-5 border border-slate-800 cursor-pointer transition-all hover:border-teal-500" onclick="selectModel('One Hundred', 111, 13539000, 68820, 825840, 6.10, 16.39)">
+                    <div class="bg-gradient-to-r from-teal-600 to-cyan-500 p-4 rounded-xl text-white mb-4">
+                        <h3 class="text-2xl font-bold">One Hundred</h3>
+                        <p class="text-sm text-cyan-100">111 m²</p>
+                    </div>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Precio:</span>
+                            <span class="font-bold text-white">$13,539,000</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">NOI/mes:</span>
+                            <span class="font-bold text-teal-400">$68,820</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">ROI:</span>
+                            <span class="font-bold text-yellow-400">16.39%</span>
+                        </div>
+                    </div>
+                    <button onclick="openLeadModal(event, 'One Hundred', 111)" class="w-full mt-4 bg-teal-600 hover:bg-teal-500 text-white font-semibold py-3 rounded-lg transition-all text-sm">
+                        Cotizar Ahora
+                    </button>
+                </div>
+
+                <!-- TWO HUNDRED -->
+                <div class="model-card glass-card rounded-2xl p-5 border border-slate-800 cursor-pointer transition-all hover:border-teal-500" onclick="selectModel('Two Hundred', 223, 25742000, 128002, 1536024, 5.97, 16.76)">
+                    <div class="bg-gradient-to-r from-teal-600 to-cyan-500 p-4 rounded-xl text-white mb-4">
+                        <h3 class="text-2xl font-bold">Two Hundred</h3>
+                        <p class="text-sm text-cyan-100">223 m²</p>
+                    </div>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Precio:</span>
+                            <span class="font-bold text-white">$25,742,000</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">NOI/mes:</span>
+                            <span class="font-bold text-teal-400">$128,002</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">ROI:</span>
+                            <span class="font-bold text-yellow-400">16.76%</span>
+                        </div>
+                    </div>
+                    <button onclick="openLeadModal(event, 'Two Hundred', 223)" class="w-full mt-4 bg-teal-600 hover:bg-teal-500 text-white font-semibold py-3 rounded-lg transition-all text-sm">
+                        Cotizar Ahora
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 2: CENTRO DE RECURSOS (LEAD MAGNET GRID) -->
+        <section id="recursos" class="space-y-8">
+            <div class="text-center space-y-3">
+                <span class="text-xs font-semibold text-teal-500 uppercase tracking-widest">Centro de Recursos Premium</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-white">
+                    Descarga tu <span class="gradient-text">Material Exclusivo</span>
+                </h2>
+                <p class="text-slate-400 text-base max-w-2xl mx-auto">
+                    3 documentos profesionales para tomar la mejor decisión sobre tu inversión o consultorio.
+                </p>
+            </div>
+
+            <!-- GRID DE RECURSOS -->
+            <div class="grid md:grid-cols-3 gap-8">
+
+                <!-- RECURSO 1: BROCHURE -->
+                <div class="resource-card glass-card rounded-3xl overflow-hidden border border-slate-800 flex flex-col">
+                    <div class="bg-gradient-to-br from-teal-600 to-cyan-500 h-48 flex items-center justify-center relative overflow-hidden">
+                        <div class="absolute inset-0 opacity-20 bg-pattern"></div>
+                        <div class="relative z-10 text-center">
+                            <i class="fa-solid fa-book text-6xl text-white mb-4 block"></i>
+                            <h3 class="text-2xl font-bold text-white">Brochure Oficial</h3>
+                        </div>
+                    </div>
+                    <div class="p-6 md:p-8 flex-1 flex flex-col justify-between">
+                        <div class="space-y-4 mb-6">
+                            <p class="text-slate-300 text-sm leading-relaxed">
+                                Documento de presentación completo con fotos, planos, especificaciones técnicas y propuesta de valor de cada modelo de consultorio.
+                            </p>
+                            <ul class="text-xs text-slate-400 space-y-2">
+                                <li><i class="fa-solid fa-check text-teal-400 mr-2"></i> 12 páginas full-color</li>
+                                <li><i class="fa-solid fa-check text-teal-400 mr-2"></i> Fotos profesionales de cada modelo</li>
+                                <li><i class="fa-solid fa-check text-teal-400 mr-2"></i> Planos arquitectónicos incluidos</li>
+                            </ul>
+                        </div>
+                        <button onclick="requestResource('brochure')" class="w-full bg-gradient-to-r from-teal-600 to-cyan-500 hover:from-teal-500 hover:to-cyan-400 text-white font-bold py-4 rounded-xl transition-all text-base shadow-lg shadow-teal-600/30 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-download"></i> Descargar Ahora
+                        </button>
+                    </div>
+                </div>
+
+                <!-- RECURSO 2: FICHA TÉCNICA -->
+                <div class="resource-card glass-card rounded-3xl overflow-hidden border border-slate-800 flex flex-col md:translate-y-8">
+                    <div class="bg-gradient-to-br from-purple-600 to-pink-500 h-48 flex items-center justify-center relative overflow-hidden">
+                        <div class="absolute inset-0 opacity-20 bg-pattern"></div>
+                        <div class="relative z-10 text-center">
+                            <i class="fa-solid fa-square-poll-horizontal text-6xl text-white mb-4 block"></i>
+                            <h3 class="text-2xl font-bold text-white">Ficha Técnica</h3>
+                        </div>
+                    </div>
+                    <div class="p-6 md:p-8 flex-1 flex flex-col justify-between">
+                        <div class="space-y-4 mb-6">
+                            <p class="text-slate-300 text-sm leading-relaxed">
+                                Especificaciones arquitectónicas detalladas: dimensiones, acabados premium, sistemas de climatización y normativas de salud COFEPRIS.
+                            </p>
+                            <ul class="text-xs text-slate-400 space-y-2">
+                                <li><i class="fa-solid fa-check text-purple-400 mr-2"></i> Planos en escala técnica</li>
+                                <li><i class="fa-solid fa-check text-purple-400 mr-2"></i> Especificaciones de acabados</li>
+                                <li><i class="fa-solid fa-check text-purple-400 mr-2"></i> Cumplimiento normativo COFEPRIS</li>
+                            </ul>
+                        </div>
+                        <button onclick="requestResource('ficha')" class="w-full bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-500 hover:to-pink-400 text-white font-bold py-4 rounded-xl transition-all text-base shadow-lg shadow-purple-600/30 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-download"></i> Descargar Ahora
+                        </button>
+                    </div>
+                </div>
+
+                <!-- RECURSO 3: CORRIDA FINANCIERA -->
+                <div class="resource-card glass-card rounded-3xl overflow-hidden border border-slate-800 flex flex-col">
+                    <div class="bg-gradient-to-br from-yellow-500 to-orange-500 h-48 flex items-center justify-center relative overflow-hidden">
+                        <div class="absolute inset-0 opacity-20 bg-pattern"></div>
+                        <div class="relative z-10 text-center">
+                            <i class="fa-solid fa-chart-line text-6xl text-white mb-4 block"></i>
+                            <h3 class="text-2xl font-bold text-white">Corrida Financiera</h3>
+                        </div>
+                    </div>
+                    <div class="p-6 md:p-8 flex-1 flex flex-col justify-between">
+                        <div class="space-y-4 mb-6">
+                            <p class="text-slate-300 text-sm leading-relaxed">
+                                Análisis financiero completo: inversión, ROI proyectado, NOI mensual/anual, Cap Rate, flujo de caja a 5 y 10 años.
+                            </p>
+                            <ul class="text-xs text-slate-400 space-y-2">
+                                <li><i class="fa-solid fa-check text-yellow-400 mr-2"></i> Proyecciones a corto y largo plazo</li>
+                                <li><i class="fa-solid fa-check text-yellow-400 mr-2"></i> Análisis de rentabilidad</li>
+                                <li><i class="fa-solid fa-check text-yellow-400 mr-2"></i> Personalizable por modelo</li>
+                            </ul>
+                        </div>
+                        <button onclick="requestResource('financiera')" class="w-full bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 text-white font-bold py-4 rounded-xl transition-all text-base shadow-lg shadow-yellow-500/30 flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-download"></i> Descargar Ahora
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SECCIÓN 3: UBICACIÓN -->
+        <section id="ubicacion" class="space-y-6">
+            <div class="text-center space-y-3">
+                <span class="text-xs font-semibold text-teal-500 uppercase tracking-widest">Zona Premium de Zapopan</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-white">
+                    Ubicación Estratégica en <span class="gradient-text">Valle Real</span>
+                </h2>
+            </div>
+
+            <div class="glass-card rounded-3xl p-8 border border-slate-800">
+                <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <div class="space-y-6">
+                        <div class="space-y-2">
+                            <h3 class="text-2xl font-bold text-white">Avenida Central Guillermo González Camarena #500</h3>
+                            <p class="text-teal-400 font-semibold">Valle Real, 45136 Zapopan, Jalisco</p>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800">
+                                <div class="text-2xl font-bold text-teal-400 mb-1">45+</div>
+                                <p class="text-xs text-slate-400">Años de experiencia en la zona</p>
+                            </div>
+                            <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800">
+                                <div class="text-2xl font-bold text-teal-400 mb-1">AAA</div>
+                                <p class="text-xs text-slate-400">Clasificación de zona</p>
+                            </div>
+                        </div>
+
+                        <a href="https://maps.google.com/?q=Avenida+Central+Guillermo+Gonzalez+Camarena+500+Valle+Real+Zapopan" target="_blank" class="inline-block bg-gradient-to-r from-teal-600 to-cyan-500 hover:from-teal-500 hover:to-cyan-400 text-white font-bold px-8 py-4 rounded-xl transition-all shadow-lg text-base">
+                            <i class="fa-solid fa-map-location-dot mr-2"></i> Ver en Google Maps
+                        </a>
+                    </div>
+
+                    <div class="bg-slate-900/80 h-80 rounded-2xl border border-slate-800 flex items-center justify-center">
+                        <div class="text-center space-y-4">
+                            <i class="fa-solid fa-location-dot text-6xl text-teal-500 animate-bounce"></i>
+                            <p class="text-slate-400">Ubicación interactiva en Google Maps</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL DE CAPTURA DE LEADS -->
+    <div id="lead-modal" class="modal-overlay">
+        <div class="glass-card max-w-md w-full rounded-3xl p-8 border border-slate-700 relative space-y-6">
+            <button onclick="closeLeadModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-2xl w-10 h-10 flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="space-y-2">
+                <div class="w-14 h-14 rounded-2xl bg-teal-500/20 text-teal-400 flex items-center justify-center text-2xl mb-4">
+                    <i class="fa-solid fa-file-pdf"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white">Generar Cotización PDF</h3>
+                <p class="text-sm text-slate-400">
+                    Ingresa tus datos para generar tu cotización personalizada del modelo <span id="modal-modelo-name" class="text-teal-400 font-bold">Ten</span>
+                </p>
+            </div>
+
+            <form onsubmit="handleLeadSubmit(event)" class="space-y-4">
+                <div>
+                    <label class="text-xs font-semibold text-slate-300 block mb-2">Nombre Completo *</label>
+                    <input type="text" id="lead-nombre" required placeholder="Dr. Alejandro Gómez" class="w-full bg-slate-900 border border-slate-700 text-white rounded-xl px-4 py-3 text-base focus:outline-none focus:border-teal-500 placeholder-slate-500">
+                </div>
+
+                <div>
+                    <label class="text-xs font-semibold text-slate-300 block mb-2">Teléfono / WhatsApp *</label>
+                    <input type="tel" id="lead-telefono" required placeholder="33 1234 5678" class="w-full bg-slate-900 border border-slate-700 text-white rounded-xl px-4 py-3 text-base focus:outline-none focus:border-teal-500 placeholder-slate-500">
+                </div>
+
+                <div>
+                    <label class="text-xs font-semibold text-slate-300 block mb-2">Correo Electrónico *</label>
+                    <input type="email" id="lead-email" required placeholder="doctor@ejemplo.com" class="w-full bg-slate-900 border border-slate-700 text-white rounded-xl px-4 py-3 text-base focus:outline-none focus:border-teal-500 placeholder-slate-500">
+                </div>
+
+                <div>
+                    <label class="text-xs font-semibold text-slate-300 block mb-2">Perfil *</label>
+                    <select id="lead-perfil" class="w-full bg-slate-900 border border-slate-700 text-white rounded-xl px-4 py-3 text-base focus:outline-none focus:border-teal-500">
+                        <option value="">Selecciona tu perfil</option>
+                        <option value="doctor">Médico / Especialista</option>
+                        <option value="inversionista">Inversionista</option>
+                        <option value="ambos">Ambos</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="w-full bg-gradient-to-r from-teal-600 to-cyan-500 hover:from-teal-500 hover:to-cyan-400 text-white font-bold py-4 rounded-xl text-base transition-all shadow-lg shadow-teal-600/30">
+                    <i class="fa-solid fa-paper-plane mr-2"></i> Generar PDF y Descargar
+                </button>
+            </form>
+
+            <div class="pt-4 border-t border-slate-800 text-center">
+                <p class="text-xs text-slate-400">También recibirás la cotización por <i class="fa-brands fa-whatsapp text-emerald-500 mx-1"></i>WhatsApp</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE ÉXITO -->
+    <div id="success-modal" class="modal-overlay">
+        <div class="glass-card max-w-md w-full rounded-3xl p-8 border border-slate-700 text-center space-y-6">
+            <div class="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-3xl mx-auto">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <div class="space-y-2">
+                <h3 class="text-2xl font-bold text-white">¡Perfecto!</h3>
+                <p class="text-slate-400">
+                    Tu cotización ha sido generada y está lista para descargar. También la recibirás por WhatsApp.
+                </p>
+            </div>
+            <button onclick="closeSuccessModal()" class="w-full bg-gradient-to-r from-teal-600 to-cyan-500 text-white font-bold py-3 rounded-xl transition-all">
+                Entendido
+            </button>
+        </div>
+    </div>
+
+    <!-- PDF TEMPLATE (HIDDEN) -->
+    <div id="pdf-template" class="pdf-template">
+        <div style="text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid #0d9488;">
+            <div style="display: inline-block; width: 50px; height: 50px; background: linear-gradient(135deg, #0d9488 0%, #0891b2 100%); border-radius: 10px; text-align: center; line-height: 50px; color: white; font-weight: bold; font-size: 24px; margin-bottom: 10px;">NM</div>
+            <h1 style="margin: 10px 0 5px 0; color: #0f172a; font-size: 28px; font-weight: bold;">NEXUS MEDICUS</h1>
+            <p style="margin: 0; color: #0d9488; font-weight: bold;">Consultorios Médicos Premium en Valle Real</p>
+        </div>
+
+        <div style="margin-bottom: 30px;">
+            <p style="font-size: 12px; color: #64748b; margin: 5px 0;"><strong>Fecha:</strong> <span id="pdf-fecha">--</span></p>
+            <p style="font-size: 12px; color: #64748b; margin: 5px 0;"><strong>Cliente:</strong> <span id="pdf-cliente">--</span></p>
+            <p style="font-size: 12px; color: #64748b; margin: 5px 0;"><strong>Modelo:</strong> <span id="pdf-modelo">--</span></p>
+        </div>
+
+        <h2 style="color: #0f172a; font-size: 18px; font-weight: bold; margin: 20px 0 10px 0; border-bottom: 2px solid #0d9488; padding-bottom: 10px;">DETALLES DEL CONSULTORIO</h2>
+
+        <table style="width: 100%; margin-bottom: 30px; border-collapse: collapse;">
+            <tr style="background-color: #f0fdfa;">
+                <td style="padding: 12px; border: 1px solid #d1fae5; font-weight: bold; color: #0f172a;">Superficie</td>
+                <td style="padding: 12px; border: 1px solid #d1fae5; color: #0f172a;"><span id="pdf-m2">--</span> m²</td>
+            </tr>
+            <tr>
+                <td style="padding: 12px; border: 1px solid #d1fae5; font-weight: bold; color: #0f172a;">Precio Total</td>
+                <td style="padding: 12px; border: 1px solid #d1fae5; color: #0f172a;">$<span id="pdf-precio">--</span> MXN</td>
+            </tr>
+            <tr style="background-color: #f0fdfa;">
+                <td style="padding: 12px; border: 1px solid #d1fae5; font-weight: bold; color: #0f172a;">Ubicación</td>
+                <td style="padding: 12px; border: 1px solid #d1fae5; color: #0f172a;">Av. Guillermo González Camarena #500, Valle Real, Zapopan</td>
+            </tr>
+        </table>
+
+        <h2 style="color: #0f172a; font-size: 18px; font-weight: bold; margin: 20px 0 10px 0; border-bottom: 2px solid #0d9488; padding-bottom: 10px;">ANÁLISIS FINANCIERO</h2>
+
+        <table style="width: 100%; margin-bottom: 30px; border-collapse: collapse;">
+            <tr style="background-color: #f0fdfa;">
+                <td style="padding: 12px; border: 1px solid #d1fae5; font-weight: bold; color: #0f172a;">Ingreso Neto Mensual (NOI)</td>
+                <td style="padding: 12px; border: 1px solid #d1fae5; text-align: right; color: #0d9488; font-weight: bold;">$<span id="pdf-noi-mes">--</span> MXN</td>
+            </tr>
+            <tr>
+                <td style="padding: 12px; border: 1px solid #d1fae5; font-weight: bold; color: #0f172a;">Ingreso Neto Anual (NOI)</td>
+                <td style="padding: 12px; border: 1px solid #d1fae5; text-align: right; color: #0d9488; font-weight: bold;">$<span id="pdf-noi-anio">--</span> MXN</td>
+            </tr>
+            <tr style="background-color: #f0fdfa;">
+                <td style="padding: 12px; border: 1px solid #d1fae5; font-weight: bold; color: #0f172a;">Cap Rate Estimado</td>
+                <td style="padding: 12px; border: 1px solid #d1fae5; text-align: right; color: #d97706; font-weight: bold;"><span id="pdf-caprate">--</span>%</td>
+            </tr>
+            <tr>
+                <td style="padding: 12px; border: 1px solid #d1fae5; font-weight: bold; color: #0f172a;">ROI Proyectado Anual</td>
+                <td style="padding: 12px; border: 1px solid #d1fae5; text-align: right; color: #d97706; font-weight: bold;"><span id="pdf-roi">--</span>%</td>
+            </tr>
+        </table>
+
+        <div style="background-color: #f0fdfa; padding: 20px; border-radius: 8px; border-left: 4px solid #0d9488; margin-bottom: 30px;">
+            <p style="margin: 0 0 10px 0; font-weight: bold; color: #0f172a; font-size: 14px;">Nota Importante:</p>
+            <p style="margin: 0; font-size: 12px; color: #64748b; line-height: 1.6;">
+                Esta cotización es válida por 30 días. Los rendimientos proyectados se basan en ocupación del 92% y condiciones de mercado actuales. Para mayor información, contacta a nuestro equipo de ventas.
+            </p>
+        </div>
+
+        <div style="text-align: center; padding-top: 20px; border-top: 1px solid #e2e8f0; margin-top: 30px;">
+            <p style="margin: 0; font-size: 11px; color: #94a3b8;">© 2026 Nexus Medicus • Valle Real • Zapopan, Jalisco</p>
+            <p style="margin: 5px 0 0 0; font-size: 11px; color: #94a3b8;">Consultorios Médicos Premium | Inversiones Inmobiliarias de Salud</p>
+        </div>
+    </div>
+
+    <!-- WHATSAPP FLOTANTE -->
+    <div class="whatsapp-float">
+        <a id="whatsapp-btn" href="https://wa.me/523300000000?text=Hola%20Nexus%20Medicus%2C%20me%20interesa%20recibir%20asesor%C3%ADa%20sobre%20consultorios%20en%20Valle%20Real%2C%20Zapopan." target="_blank" class="flex items-center justify-center w-16 h-16 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white text-2xl shadow-lg shadow-emerald-500/50 transition-all">
+            <i class="fa-brands fa-whatsapp"></i>
+        </a>
+    </div>
+
+    <!-- SCRIPT -->
+    <script>
+        let currentModel = { nombre: 'Ten', m2: 18, precio: 2205000, noi_mes: 16128, noi_anio: 193536, caprate: 8.78, roi: 11.39 };
+
+        function selectModel(nombre, m2, precio, noi_mes, noi_anio, caprate, roi) {
+            currentModel = { nombre, m2, precio, noi_mes, noi_anio, caprate, roi };
+            updateWhatsAppButton();
+        }
+
+        function updateWhatsAppButton() {
+            const mensaje = encodeURIComponent(`Hola Nexus Medicus, me interesa recibir asesoría sobre el modelo ${currentModel.nombre} de ${currentModel.m2}m² en Valle Real, Zapopan. ROI: ${currentModel.roi}%`);
+            document.getElementById('whatsapp-btn').href = `https://wa.me/523300000000?text=${mensaje}`;
+        }
+
+        function openLeadModal(e, modelo, m2) {
+            e.preventDefault();
+            currentModel.nombre = modelo;
+            currentModel.m2 = m2;
+            document.getElementById('modal-modelo-name').textContent = `${modelo} (${m2}m²)`;
+            document.getElementById('lead-modal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLeadModal() {
+            document.getElementById('lead-modal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('success-modal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function generatePDF(nombre, email, telefono) {
+            const today = new Date();
+            const fecha = today.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
+
+            document.getElementById('pdf-fecha').textContent = fecha;
+            document.getElementById('pdf-cliente').textContent = nombre;
+            document.getElementById('pdf-modelo').textContent = currentModel.nombre;
+            document.getElementById('pdf-m2').textContent = currentModel.m2;
+            document.getElementById('pdf-precio').textContent = currentModel.precio.toLocaleString();
+            document.getElementById('pdf-noi-mes').textContent = currentModel.noi_mes.toLocaleString();
+            document.getElementById('pdf-noi-anio').textContent = currentModel.noi_anio.toLocaleString();
+            document.getElementById('pdf-caprate').textContent = currentModel.caprate;
+            document.getElementById('pdf-roi').textContent = currentModel.roi;
+
+            const element = document.getElementById('pdf-template');
+            const opt = {
+                margin: 0,
+                filename: `Cotizacion_Nexus_Medicus_${currentModel.nombre}_${fecha.replace(/\\s+/g, '_')}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+            };
+
+            html2pdf().set(opt).from(element).save();
+        }
+
+        function handleLeadSubmit(e) {
+            e.preventDefault();
+
+            const nombre = document.getElementById('lead-nombre').value;
+            const email = document.getElementById('lead-email').value;
+            const telefono = document.getElementById('lead-telefono').value;
+
+            generatePDF(nombre, email, telefono);
+
+            closeLeadModal();
+
+            setTimeout(() => {
+                document.getElementById('success-modal').classList.add('active');
+                document.body.style.overflow = 'hidden';
+
+                setTimeout(() => {
+                    document.getElementById('lead-modal').style.display = 'none';
+                    document.getElementById('lead-nombre').value = '';
+                    document.getElementById('lead-email').value = '';
+                    document.getElementById('lead-telefono').value = '';
+                    document.getElementById('lead-perfil').value = '';
+                }, 500);
+            }, 1000);
+        }
+
+        function toggleMoreModels() {
+            const moreModels = document.getElementById('more-models');
+            const chevron = document.getElementById('chevron-icon');
+
+            if (moreModels.classList.contains('hidden')) {
+                moreModels.classList.remove('hidden');
+                chevron.classList.add('rotate-180');
+            } else {
+                moreModels.classList.add('hidden');
+                chevron.classList.remove('rotate-180');
+            }
+        }
+
+        function scrollToRecursos() {
+            document.getElementById('recursos').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function requestResource(type) {
+            const resourceNames = {
+                brochure: 'Brochure_Oficial_Nexus_Medicus.pdf',
+                ficha: 'Ficha_Tecnica_Consultorios.pdf',
+                financiera: `Corrida_Financiera_${currentModel.nombre}.pdf`
+            };
+
+            alert(`Descargando: ${resourceNames[type]}\n\nEn una aplicación real, esto iniciaría la descarga automática del documento.`);
+        }
+
+        window.onload = function() {
+            updateWhatsAppButton();
+        };
+    </script>
+
+</body>
+</html>
